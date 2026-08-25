@@ -46,17 +46,17 @@ PAGE_CSS = """
 .ent p{max-width:var(--measure)}
 .ent i{color:var(--ink-2)}
 
-.rule{margin:1.75rem 0 0;padding:1rem 0 1rem 1.25rem;border-left:2px solid var(--kill);
-  max-width:var(--measure)}
-.rule span{display:block;font-family:var(--mono);font-size:.625rem;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--kill);margin-bottom:.45rem}
+.rule{margin:2.25rem 0;max-width:var(--measure)}
+.rule span{display:inline-block;font-family:var(--mono);font-size:.625rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--kill);margin-bottom:.55rem;
+  padding-bottom:.3rem;border-bottom:1px solid var(--kill)}
 .rule p{font-size:1.0625rem}
 
 .pull{margin:1.75rem 0;font-size:clamp(1.25rem,1.05rem + .9vw,1.625rem);line-height:1.35;
   letter-spacing:-.02em;max-width:26ch;color:var(--ink)}
 .pull::before{content:"\\201C"} .pull::after{content:"\\201D"}
 
-figure.t{margin:1.75rem 0 0;overflow-x:auto}
+figure.t{margin:2.25rem 0;overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:.9375rem;
   font-family:var(--mono);font-variant-numeric:tabular-nums}
 th{text-align:left;font-size:.625rem;letter-spacing:.13em;text-transform:uppercase;
@@ -64,12 +64,12 @@ th{text-align:left;font-size:.625rem;letter-spacing:.13em;text-transform:upperca
   border-bottom:1px solid var(--ink)}
 td{padding:.5rem .75rem .5rem 0;border-bottom:1px solid var(--rule)}
 td.neg{color:var(--kill)} td.pos{color:var(--live)}
-figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(--ink-2);
-  margin-top:.9rem;max-width:46rem}
+figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-height:1.6;
+  color:var(--ink-2);margin-top:.9rem;max-width:44rem}
 
-.figplate{margin:2.25rem 0 0;background:var(--plate);border:1px solid var(--rule-2)}
+.figplate{margin:2.5rem 0;background:var(--plate);border:1px solid var(--rule-2)}
 .figplate img{width:100%;display:block}
-.figplate figcaption{padding:.85rem 1rem;margin:0;color:var(--ink-3);
+.figplate figcaption{padding:.9rem 1.1rem;margin:0;color:#b9c0c9;
   border-top:1px solid #23262c;background:var(--plate)}
 
 .go{display:inline-block;margin-top:1.75rem;font-family:var(--mono);font-size:.6875rem;
@@ -101,7 +101,7 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
 .vd-discount,.vd-tool,.vd-retired{color:var(--ink-3);border-color:var(--rule-2)}
 
 /* ---------- interactive: layer switcher ---------- */
-.mapx{margin:2.25rem 0 0}
+.mapx{margin:2.5rem 0}
 .mapx__keys{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.9rem}
 .mapx__keys button{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
   text-transform:uppercase;background:none;border:1px solid var(--rule-2);border-radius:2px;
@@ -109,15 +109,16 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
 .mapx__keys button:hover{border-color:var(--ink)}
 .mapx__keys button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .mapx__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2);
-  aspect-ratio:16/10;overflow:hidden}
-.mapx__stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  overflow:hidden}
+.mapx__stage img{position:absolute;inset:0;width:100%;height:100%;
   opacity:0;transition:opacity .45s ease}
+.mapx__stage img:first-child{position:relative;height:auto}
 .mapx__stage img.on{opacity:1}
-.mapx__cap{font-family:var(--mono);font-size:.75rem;color:var(--ink-2);margin-top:.9rem;
-  max-width:46rem;min-height:2.4em}
+.mapx__cap{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-height:1.6;
+  color:var(--ink-2);margin-top:.9rem;max-width:44rem;min-height:3.2em}
 
 /* ---------- interactive: render ladder ---------- */
-.ladder{margin:2.25rem 0 0}
+.ladder{margin:2.5rem 0}
 .ladder__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2);
   aspect-ratio:16/9;overflow:hidden}
 .ladder__stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -127,11 +128,11 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
 .ladder__ctl input{flex:1;min-width:12rem;accent-color:var(--kill)}
 .ladder__n{font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;
   text-transform:uppercase;color:var(--ink-2);min-width:9rem}
-.ladder__cap{font-family:var(--mono);font-size:.75rem;color:var(--ink-2);margin-top:.6rem;
-  max-width:46rem;min-height:2.4em}
+.ladder__cap{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-height:1.6;
+  color:var(--ink-2);margin-top:.6rem;max-width:44rem;min-height:3.2em}
 
 /* ---------- interactive: fill chart ---------- */
-.fillc{margin:1.75rem 0 0;max-width:46rem}
+.fillc{margin:2.25rem 0;max-width:46rem}
 .fillc__row{display:grid;grid-template-columns:9.5rem 1fr;gap:1rem;align-items:center;
   padding:.55rem 0;border-bottom:1px solid var(--rule)}
 .fillc__lab{font-family:var(--mono);font-size:.75rem;color:var(--ink-2)}
@@ -150,11 +151,11 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
 .fillc__toggle button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 
 /* ---------- film: player + scene grid ---------- */
-.vid{margin:2.25rem 0 0;background:var(--plate);border:1px solid var(--rule-2)}
+.vid{margin:2.5rem 0;background:var(--plate);border:1px solid var(--rule-2)}
 .vid video{width:100%;display:block;background:var(--plate)}
 .vid figcaption{padding:.85rem 1rem;margin:0;color:var(--ink-3);
   border-top:1px solid #23262c;background:var(--plate)}
-.scenes{margin:2.25rem 0 0;display:grid;gap:.5rem;
+.scenes{margin:2.5rem 0;display:grid;gap:.5rem;
   grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
 .scenes figure{margin:0;background:var(--plate);border:1px solid var(--rule-2);
   overflow:hidden;cursor:zoom-in}
@@ -168,11 +169,11 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
 .lb img{max-width:100%;max-height:100%;object-fit:contain}
 
 /* ---------- interactive: time player ---------- */
-.play{margin:2.25rem 0 0}
+.play{margin:2.5rem 0}
 .play__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2);
-  aspect-ratio:16/10;overflow:hidden}
-.play__stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-  opacity:0}
+  overflow:hidden}
+.play__stage img{position:absolute;inset:0;width:100%;height:100%;opacity:0}
+.play__stage img:first-child{position:relative;height:auto}
 .play__stage img.on{opacity:1}
 .play__yr{position:absolute;left:1rem;top:.85rem;font-family:var(--mono);
   font-size:1.5rem;color:#f2f4f7;letter-spacing:.04em;
@@ -184,8 +185,8 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
 .play__ctl input{flex:1;min-width:10rem;accent-color:var(--kill)}
 
 /* ---------- interactive: verdict timeline ---------- */
-.tl{margin:1.75rem 0 0}
-.tl svg{width:100%;height:auto;display:block;overflow:visible}
+.tl{margin:2.25rem 0;overflow-x:auto}
+.tl svg{width:100%;min-width:40rem;height:auto;display:block;overflow:visible}
 .tl__dot{cursor:pointer;transition:r .15s ease}
 .tl__dot:hover{r:6}
 .tl__read{font-family:var(--mono);font-size:.75rem;color:var(--ink-2);margin-top:1rem;
@@ -621,17 +622,18 @@ def shell(slug, title, desc, body, og=""):
 </script></body></html>"""
 
 
-def head(eyebrow, h1, stand, facts):
+def head(when, h1, stand, facts):
+    facts = [(when, "the working window")] + list(facts)
     f = "".join(f"<span><b>{n}</b>{l}</span>" for n, l in facts)
     return (f'<section class="head"><div class="col-wide">'
-            f'<p class="head__eyebrow">{eyebrow}</p><h1>{h1}</h1>'
+            f'<h1>{h1}</h1>'
             f'<p class="head__stand">{stand}</p>'
             f'<div class="head__facts">{f}</div></div></section>')
 
 
 # =============================================================== MARKET =====
 market = head(
-    "Notebook 01 &middot; April &ndash; August 2026",
+    "Apr &ndash; Aug 2026",
     "Sixty ideas, run until they broke",
     "Four months of market research on 252 million rows of Indian equity and "
     "index-option history. It set out to find a signal and ended up building an "
@@ -915,7 +917,7 @@ market = head(
 
 # ========================================================== RESEARCH OS =====
 research = head(
-    "Notebook 02 &middot; July &ndash; August 2026",
+    "Jul &ndash; Aug 2026",
     "A machine for finding the question",
     "Most research tooling helps you test a hypothesis. Almost none of it helps you "
     "find one worth testing. This is an attempt at the second thing, pointed at India "
@@ -1056,7 +1058,7 @@ research = head(
 
 # ================================================================= FILM =====
 film = head(
-    "Notebook 03 &middot; July &ndash; August 2026",
+    "Jul &ndash; Aug 2026",
     "A city of six shapes, and a film about robots",
     "Twenty-five days inside Unreal Engine, which began as &ldquo;make me a simple "
     "movie&rdquo; and turned into an argument about which parts of a creative process "

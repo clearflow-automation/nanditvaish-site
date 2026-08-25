@@ -139,10 +139,14 @@ figcaption b{font-weight:600;color:var(--ink)}
 /* ---------- hero (showcase register) ---------- */
 .hero{position:relative;background:var(--plate);border-bottom:1px solid var(--ink)}
 .hero__media{position:relative;width:100%;aspect-ratio:16/9;max-height:78svh;overflow:hidden}
+@media (max-width:40rem){.hero__media{aspect-ratio:auto;height:76svh;min-height:30rem}}
 .hero__media video,.hero__media img{width:100%;height:100%;object-fit:cover;display:block}
 .hero__scrim{position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(7,9,12,.50) 0%,rgba(7,9,12,.08) 30%,rgba(7,9,12,.55) 52%,rgba(7,9,12,.90) 76%,rgba(7,9,12,.97) 100%)}
-.hero__text{position:absolute;inset:auto 0 0 0;padding:0 0 clamp(1.75rem,4vw,3.25rem)}
+.hero__text{position:absolute;inset:auto 0 0 0;padding:0 0 clamp(2.25rem,4.5vw,3.75rem)}
+.hero__deck{margin-top:1.3rem;max-width:54ch;color:rgba(236,240,244,.92);
+  font-size:clamp(.9688rem,.9rem + .45vw,1.1875rem);line-height:1.6;
+  text-shadow:0 1px 14px rgba(7,9,12,.85)}
 .hero__kicker{font-family:var(--mono);font-size:.6875rem;letter-spacing:.18em;
   text-transform:uppercase;color:rgba(233,237,242,.88);margin-bottom:1rem;text-shadow:0 1px 12px rgba(7,9,12,.9)}
 .hero h1{color:#f7f8fa;text-shadow:0 2px 24px rgba(7,9,12,.75);font-size:clamp(1.75rem,1rem + 3.2vw,3.25rem);letter-spacing:-.028em;
@@ -173,8 +177,8 @@ figcaption b{font-weight:600;color:var(--ink)}
 /* ---------- graveyard swatch (market card) ---------- */
 .graveWrap{position:relative;width:100%;height:100%;background:var(--plate);
   display:flex;align-items:center;justify-content:center}
-.grave{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;
-  width:min(78%,34rem)}
+.grave{display:grid;grid-template-columns:repeat(15,1fr);gap:6px;
+  width:min(88%,40rem)}
 .graveKey{position:absolute;left:clamp(1rem,4vw,2rem);bottom:clamp(1rem,4vw,2rem);
   display:flex;gap:1.15rem;font-family:var(--mono);font-size:.625rem;letter-spacing:.1em;
   text-transform:uppercase;color:#8b9098}

@@ -150,10 +150,14 @@ figcaption b{font-weight:600;color:var(--ink)}
 /* ---------- hero (showcase register) ---------- */
 .hero{position:relative;background:var(--plate);border-bottom:1px solid var(--ink)}
 .hero__media{position:relative;width:100%;aspect-ratio:16/9;max-height:78svh;overflow:hidden}
+@media (max-width:40rem){.hero__media{aspect-ratio:auto;height:76svh;min-height:30rem}}
 .hero__media video,.hero__media img{width:100%;height:100%;object-fit:cover;display:block}
 .hero__scrim{position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(7,9,12,.50) 0%,rgba(7,9,12,.08) 30%,rgba(7,9,12,.55) 52%,rgba(7,9,12,.90) 76%,rgba(7,9,12,.97) 100%)}
-.hero__text{position:absolute;inset:auto 0 0 0;padding:0 0 clamp(1.75rem,4vw,3.25rem)}
+.hero__text{position:absolute;inset:auto 0 0 0;padding:0 0 clamp(2.25rem,4.5vw,3.75rem)}
+.hero__deck{margin-top:1.3rem;max-width:54ch;color:rgba(236,240,244,.92);
+  font-size:clamp(.9688rem,.9rem + .45vw,1.1875rem);line-height:1.6;
+  text-shadow:0 1px 14px rgba(7,9,12,.85)}
 .hero__kicker{font-family:var(--mono);font-size:.6875rem;letter-spacing:.18em;
   text-transform:uppercase;color:rgba(233,237,242,.88);margin-bottom:1rem;text-shadow:0 1px 12px rgba(7,9,12,.9)}
 .hero h1{color:#f7f8fa;text-shadow:0 2px 24px rgba(7,9,12,.75);font-size:clamp(1.75rem,1rem + 3.2vw,3.25rem);letter-spacing:-.028em;
@@ -184,8 +188,8 @@ figcaption b{font-weight:600;color:var(--ink)}
 /* ---------- graveyard swatch (market card) ---------- */
 .graveWrap{position:relative;width:100%;height:100%;background:var(--plate);
   display:flex;align-items:center;justify-content:center}
-.grave{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;
-  width:min(78%,34rem)}
+.grave{display:grid;grid-template-columns:repeat(15,1fr);gap:6px;
+  width:min(88%,40rem)}
 .graveKey{position:absolute;left:clamp(1rem,4vw,2rem);bottom:clamp(1rem,4vw,2rem);
   display:flex;gap:1.15rem;font-family:var(--mono);font-size:.625rem;letter-spacing:.1em;
   text-transform:uppercase;color:#8b9098}
@@ -228,9 +232,10 @@ figcaption b{font-weight:600;color:var(--ink)}
     </div>
     <div class="hero__text">
       <div class="col-wide">
-        <p class="hero__kicker">Nandit Vaish &middot; selected work, 2026</p>
-        <h1>Two hundred and fifty million rows of market data. India from orbit.
-          <em>A city made of six shapes and light.</em></h1>
+        <h1>I build instruments that <em>argue back.</em></h1>
+        <p class="hero__deck">A market engine that killed forty-one of its own trading
+          ideas. A satellite study that failed its own referee, and said so.
+          A city made of six shapes and light.</p>
       </div>
     </div>
   </section>
@@ -240,7 +245,7 @@ figcaption b{font-weight:600;color:var(--ink)}
   </section>
 
   <section class="col-wide">
-    <div class="cards"><a class="card rv" href="/market/"><div class="card__fig"><div class="graveWrap"><div class="grave"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="t"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="t"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="t"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="x"></i><i class="x"></i><i class="x"></i><i class="t"></i><i class="x"></i><i class="x"></i></div><div class="graveKey"><span><s style="background:#ae2f22"></s><b>41</b> dead</span><span><s style="background:#2f9e83"></s><b>4</b> trusted</span><span><s style="background:#f2b45c"></s><b>3</b> open</span><span><s style="background:#4a4f57"></s><b>12</b> other</span></div></div></div><div class="card__meta"><span class="card__no">01</span><span class="card__when">April – August 2026</span></div><h2>Sixty ideas, run until they broke</h2><p>Four months of market research on 252 million rows of Indian equity and index-option history. A research programme that industrialised the part everyone skips: proving yourself wrong quickly, cheaply, and on the record.</p><span class="card__go">Open the notebook</span></a><a class="card rv" href="/research-os/"><div class="card__fig"><img src="/assets/plates/grid-poster.jpg" alt="India rendered as 318,706 cells, coloured by how much each changed" loading="lazy"></div><div class="card__meta"><span class="card__no">02</span><span class="card__when">July – August 2026</span></div><h2>India from orbit, on one join key</h2><p>Satellite embeddings over 318,706 five-kilometre cells, every year since 2017, joined to rainfall, land cover, districts, elevation and population. Nineteen terabytes of source reduced to 242 megabytes by choosing the right resolution.</p><span class="card__go">Open the notebook</span></a><a class="card rv" href="/film/"><div class="card__fig"><img src="/assets/plates/film-poster.jpg" alt="A frame from the film: the hands alone cost $9,315" loading="lazy"></div><div class="card__meta"><span class="card__no">03</span><span class="card__when">July – August 2026</span></div><h2>A street of six shapes, and a film about robots</h2><p>Twenty-five days inside Unreal Engine. A neon city built entirely from primitives, and a three-minute film that gives every number in a bank’s humanoid-robot projection its own scene — narrated, timed and shipped.</p><span class="card__go">Open the notebook</span></a></div>
+    <div class="cards"><a class="card rv" href="/market/"><div class="card__fig"><div class="graveWrap"><div class="grave"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="t"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="t"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="t"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="x"></i><i class="x"></i><i class="x"></i><i class="t"></i><i class="x"></i><i class="x"></i></div><div class="graveKey"><span><s style="background:#ae2f22"></s><b>41</b> dead</span><span><s style="background:#2f9e83"></s><b>4</b> trusted</span><span><s style="background:#f2b45c"></s><b>3</b> open</span><span><s style="background:#4a4f57"></s><b>12</b> other</span></div></div></div><div class="card__meta"><span class="card__when">April – August 2026</span></div><h2>Sixty ideas, run until they broke</h2><p>Four months of market research on 252 million rows of Indian equity and index-option history. A research programme that industrialised the part everyone skips: proving yourself wrong quickly, cheaply, and on the record.</p><span class="card__go">Open the notebook</span></a><a class="card rv" href="/research-os/"><div class="card__fig"><img src="/assets/plates/grid-poster.jpg" alt="India rendered as 318,706 cells, coloured by how much each changed" loading="lazy"></div><div class="card__meta"><span class="card__when">July – August 2026</span></div><h2>India from orbit, on one join key</h2><p>Satellite embeddings over 318,706 five-kilometre cells, every year since 2017, joined to rainfall, land cover, districts, elevation and population. Nineteen terabytes of source reduced to 242 megabytes by choosing the right resolution.</p><span class="card__go">Open the notebook</span></a><a class="card rv" href="/film/"><div class="card__fig"><img src="/assets/plates/film-poster.jpg" alt="A frame from the film: the hands alone cost $9,315" loading="lazy"></div><div class="card__meta"><span class="card__when">July – August 2026</span></div><h2>A street of six shapes, and a film about robots</h2><p>Twenty-five days inside Unreal Engine. A neon city built entirely from primitives, and a three-minute film that gives every number in a bank’s humanoid-robot projection its own scene — narrated, timed and shipped.</p><span class="card__go">Open the notebook</span></a></div>
   </section>
 
   <section class="plate rv">

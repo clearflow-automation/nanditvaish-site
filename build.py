@@ -175,10 +175,9 @@ CARDS = [
 
 cards_html = "".join(
   '<a class="card rv" href="%s"><div class="card__fig">%s</div>'
-  '<div class="card__meta"><span class="card__no">%s</span>'
-  '<span class="card__when">%s</span></div>'
+  '<div class="card__meta"><span class="card__when">%s</span></div>'
   '<h2>%s</h2><p>%s</p><span class="card__go">%s</span></a>'
-  % (c["href"], c["media"], c["no"], c["when"], c["title"], c["desc"], c["go"])
+  % (c["href"], c["media"], c["when"], c["title"], c["desc"], c["go"])
   for c in CARDS)
 
 SCALE=[("252 M","rows of market data, 188k parquet parts"),
@@ -232,9 +231,10 @@ __HEADP__
     </div>
     <div class="hero__text">
       <div class="col-wide">
-        <p class="hero__kicker">Nandit Vaish &middot; selected work, 2026</p>
-        <h1>Two hundred and fifty million rows of market data. India from orbit.
-          <em>A city made of six shapes and light.</em></h1>
+        <h1>I build instruments that <em>argue back.</em></h1>
+        <p class="hero__deck">A market engine that killed forty-one of its own trading
+          ideas. A satellite study that failed its own referee, and said so.
+          A city made of six shapes and light.</p>
       </div>
     </div>
   </section>
