@@ -365,6 +365,15 @@ figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-he
   border-radius:2px;padding:.4rem .85rem;cursor:pointer;min-width:5.5rem}
 .play__ctl input{flex:1;min-width:10rem;accent-color:var(--kill)}
 
+/* ---------- interactive: sector rotation ---------- */
+.rrg{margin:2.5rem 0}
+.rrg__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2)}
+.rrg__stage canvas{width:100%;display:block}
+.rrg__ctl{display:flex;align-items:center;gap:.9rem;margin-top:.9rem;flex-wrap:wrap}
+.rrg__ctl input{flex:1;min-width:10rem;accent-color:var(--kill)}
+.rrg__date{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
+  color:var(--ink-2);min-width:7rem}
+
 /* ---------- interactive: verdict timeline ---------- */
 .tl{margin:2.25rem 0;overflow-x:auto}
 .tl svg{width:100%;min-width:40rem;height:auto;display:block;overflow:visible}
@@ -515,6 +524,62 @@ figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-he
   lb.addEventListener('click',function(){lb.classList.remove('on')});
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape') lb.classList.remove('on');
+  });
+})();
+
+/* sector rotation */
+(function(){
+  var cv=document.getElementById('rrgc'); if(!cv)return;
+  var btn=document.getElementById('rrgb'), rng=document.getElementById('rrgr'),
+      dt=document.getElementById('rrgd'), ctx=cv.getContext('2d'), D=null, t=null;
+  var PAL=['#e0705f','#2f9e83','#f2b45c','#7aa2f7','#c792ea','#8fbf6d','#e39fc2',
+           '#5fb4c9','#d0885f','#9aa5ce','#c9c05f','#6fcf97','#bf6f8f'];
+  var W=cv.width,H=cv.height,CX=W/2,CY=H/2,S=34;   // px per unit around 100,100
+  function px(v){return CX+(v-100)*S}
+  function py(v){return CY-(v-100)*S}
+  function draw(i){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0a0b0d';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(47,158,131,.05)';ctx.fillRect(CX,0,W-CX,CY);
+    ctx.fillStyle='rgba(174,47,34,.05)';ctx.fillRect(0,CY,CX,H-CY);
+    ctx.strokeStyle='#23262c';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(CX,0);ctx.lineTo(CX,H);ctx.moveTo(0,CY);ctx.lineTo(W,CY);ctx.stroke();
+    ctx.font='11px "IBM Plex Mono",monospace';ctx.fillStyle='#5c636d';
+    ctx.fillText('IMPROVING',14,20);ctx.fillText('LEADING',W-76,20);
+    ctx.fillText('LAGGING',14,H-12);ctx.fillText('WEAKENING',W-86,H-12);
+    D.sectors.forEach(function(sec,k){
+      var col=PAL[k%PAL.length];
+      ctx.strokeStyle=col;ctx.globalAlpha=.55;ctx.lineWidth=1.4;ctx.beginPath();
+      var moved=false;
+      for(var j=Math.max(0,i-8);j<=i;j++){
+        var x=sec.x[j],y=sec.y[j];
+        if(x==null||y==null)continue;
+        var X=px(x),Y=py(y);
+        if(!moved){ctx.moveTo(X,Y);moved=true}else ctx.lineTo(X,Y);
+      }
+      ctx.stroke();ctx.globalAlpha=1;
+      var x=sec.x[i],y=sec.y[i]; if(x==null||y==null)return;
+      var X=px(x),Y=py(y);
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(X,Y,5,0,7);ctx.fill();
+      ctx.fillText(sec.code,X+8,Y+4);
+    });
+    dt.textContent=D.weeks[i];rng.value=i;
+  }
+  function stop(){clearInterval(t);t=null;btn.textContent='Play'}
+  fetch('/assets/charts/sectors.json').then(function(r){return r.json()})
+  .then(function(d){
+    D=d;rng.max=d.weeks.length-1;rng.value=d.weeks.length-1;
+    draw(d.weeks.length-1);
+    btn.addEventListener('click',function(){
+      if(t)return stop();
+      btn.textContent='Pause';
+      var i=+rng.value; if(i>=d.weeks.length-1)i=8;
+      t=setInterval(function(){
+        i++;if(i>=d.weeks.length){stop();return}
+        draw(i);
+      },110);
+    });
+    rng.addEventListener('input',function(){stop();draw(+rng.value)});
   });
 })();
 

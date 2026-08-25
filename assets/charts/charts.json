@@ -7,5 +7,9 @@
  "gap_median": 1.1,
  "regime1_cagr": 41.5,
  "regime2_cagr": 14.8,
- "curve_end": 413.8
+ "curve_end": 413.8,
+ "breadth_now_50": 48.3,
+ "breadth_now_200": 57.6,
+ "rrg_sectors": 13,
+ "rrg_weeks": 274
 }

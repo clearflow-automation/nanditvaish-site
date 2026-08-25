@@ -183,3 +183,132 @@ save(fig, "regimes.png")
 
 (OUT / "charts.json").write_text(json.dumps(stats, indent=1))
 print(json.dumps(stats))
+
+# ============================ 4. kabaddi (notebook numbers) ==================
+# These are the notebook's simulation results, NOT recomputed here — the ruin
+# distribution needs the full Kabaddi harness. Drawn honestly, labelled honestly.
+KAB = [  # (label, de-size, cagr %, max dd %, p5 %)
+    ("1x",  "on",  4.7, -15.7, None), ("1x",  "off", 6.9, -19.3, None),
+    ("3x",  "on",  7.8, -28.4, None), ("3x",  "off", 16.8, -49.9, None),
+    ("10x", "on",  9.2, -53.6, None), ("10x", "off", -0.6, -94.9, -99.7),
+]
+fig, ax = frame()
+xs = np.arange(len(KAB), dtype=float)
+xs += (xs // 2) * .5                                   # gap between leverage groups
+for x, (lev, ds, cagr, dd, p5) in zip(xs, KAB):
+    body = "#3a4048" if ds == "on" else "#4a3a3d"
+    ax.bar([x], [cagr - dd], bottom=dd, width=.62, color=body, zorder=2)
+    ax.plot([x - .31, x + .31], [cagr, cagr], color=LIVE if cagr > 0 else KILL,
+            lw=2.4, zorder=4)
+    ax.plot([x - .31, x + .31], [dd, dd], color=KILL, lw=2.4, zorder=4)
+    ax.text(x - .42 if p5 is not None else x, dd - 3.5, f"{dd:.1f}%", color=KILL,
+            ha="right" if p5 is not None else "center", va="top", fontsize=9)
+    ax.text(x, cagr + 3.5, f"{cagr:+.1f}%", color=LIVE if cagr > 0 else KILL,
+            ha="center", va="bottom", fontsize=9)
+    if p5 is not None:
+        ax.scatter([x], [p5], color=KILL, s=26, zorder=5)
+        ax.text(x + .42, p5, f"p5: {p5}%", color=KILL, fontsize=9, va="center")
+ax.axhline(0, color=DIM, lw=.8)
+for x, (lev, ds, *_ ) in zip(xs, KAB):
+    ax.text(x, -118, f"{lev}\n{ds}", color=DIM, ha="center", va="top", fontsize=9)
+ax.set_xticks([]); ax.set_ylim(-125, 30)
+ax.set_title("KABADDI · WHAT LEVERAGE DOES TO A POSITIVE-EXPECTANCY BOOK",
+             loc="left", fontsize=11, color=INK, pad=14)
+ax.text(.995, .975, "from the notebook's simulation · not recomputed here",
+        transform=ax.transAxes, color=DIM, fontsize=8.5, ha="right", va="top")
+save(fig, "kabaddi.png")
+
+# ============================ 5. real breadth ================================
+print("computing breadth ...")
+above50, above200 = [], []
+for sym, df in data.items():
+    c = df.set_index("date")["close"]
+    if len(c) < 260:
+        continue
+    above50.append((c > c.rolling(50).mean()).rename(sym))
+    above200.append((c > c.rolling(200).mean()).rename(sym))
+B50 = pd.concat(above50, axis=1).sort_index()
+B200 = pd.concat(above200, axis=1).sort_index()
+b50 = B50.mean(axis=1) * 100
+b200 = B200.mean(axis=1) * 100
+b50, b200 = b50[b50.index >= "2021-01-01"], b200[b200.index >= "2021-01-01"]
+stats["breadth_now_50"] = round(float(b50.iloc[-1]), 1)
+stats["breadth_now_200"] = round(float(b200.iloc[-1]), 1)
+
+fig, ax = frame()
+ax.axhline(50, color=DIM, lw=.8, ls=(0, (4, 4)))
+from matplotlib.dates import date2num
+xb = date2num(b50.index.to_pydatetime())
+ax.plot(b200.index, b200.values, color="#6b7280", lw=1.1, label="above 200-day")
+ax.plot(b50.index, b50.values, color=INK, lw=1.3, label="above 50-day")
+v = b50.values.astype(float)
+ax.fill_between(xb, 50, v, where=v < 50, color=KILL, alpha=.14, lw=0)
+ax.fill_between(xb, 50, v, where=v >= 50, color=LIVE, alpha=.10, lw=0)
+ax.set_ylim(0, 100)
+ax.set_title("BREADTH · SHARE OF THE UNIVERSE ABOVE ITS OWN MOVING AVERAGE",
+             loc="left", fontsize=11, color=INK, pad=14)
+leg = ax.legend(loc="lower left", frameon=False, fontsize=9)
+for t in leg.get_texts():
+    t.set_color(DIM)
+ax.margins(x=.01)
+save(fig, "breadth.png")
+
+# ============================ 6. sector rotation trails ======================
+print("computing sector rotation ...")
+import sys
+sys.path.insert(0, os.path.expanduser("~/Desktop/historical_data/claude/strategy"))
+from rs import INDUSTRY_TO_SECTOR                          # the repo's own mapping
+master = pd.read_parquet(os.path.expanduser(
+    "~/Desktop/historical_data/claude/strategy/reference/symbols_master.parquet"))
+sec_of = {r.symbol: INDUSTRY_TO_SECTOR.get(r.industry, "Other")
+          for r in master.itertuples()}
+
+closes = pd.concat(
+    {s: df.set_index("date")["close"] for s, df in data.items()}, axis=1).sort_index()
+closes = closes[closes.index >= "2020-06-01"]
+rets = closes.pct_change()
+rets = rets.where(rets.abs() < .5)
+uni = (1 + rets.mean(axis=1, skipna=True).fillna(0)).cumprod()
+
+sectors = {}
+for sec in sorted(set(sec_of.values())):
+    cols = [s for s in closes.columns if sec_of.get(s) == sec]
+    if len(cols) < 8 or sec == "Other":
+        continue
+    idx = (1 + rets[cols].mean(axis=1, skipna=True).fillna(0)).cumprod()
+    sectors[sec] = idx / uni                               # RS ratio vs the universe
+
+wk = pd.concat(sectors, axis=1).resample("W-FRI").last().dropna(how="all")
+ratio = wk / wk.rolling(13).mean() * 100                   # JdK-style RS-ratio
+mom = ratio / ratio.shift(1) * 100                         # and its momentum
+ratio, mom = ratio.dropna(), mom.dropna()
+common = ratio.index.intersection(mom.index)
+common = common[common >= "2021-06-01"]
+ratio, mom = ratio.loc[common], mom.loc[common]
+
+CODES = {"Financial Services": "FIN", "Information Technology": "IT",
+         "Automobile and Auto Components": "AUTO", "Healthcare": "HLTH",
+         "Fast Moving Consumer Goods": "FMCG", "Metals & Mining": "METL",
+         "Oil Gas & Consumable Fuels": "ENGY", "Capital Goods": "CAPG",
+         "Consumer Durables": "CDUR", "Power": "PWR", "Realty": "RLTY",
+         "Chemicals": "CHEM", "Construction": "CNST", "Services": "SVCS",
+         "Telecommunication": "TCOM", "Construction Materials": "CMAT",
+         "Consumer Services": "CSVC", "Textiles": "TXTL",
+         "Media Entertainment & Publication": "MDIA", "Diversified": "DIV"}
+payload = {
+    "weeks": [d.strftime("%Y-%m-%d") for d in ratio.index],
+    "sectors": [
+        {"name": sec, "code": CODES.get(sec, sec[:4].upper()),
+         "n": sum(1 for s in sec_of.values() if s == sec),
+         "x": [round(float(v), 2) if np.isfinite(v) else None for v in ratio[sec]],
+         "y": [round(float(v), 2) if np.isfinite(v) else None for v in mom[sec]]}
+        for sec in sectors if sec in ratio.columns],
+}
+(OUT / "sectors.json").write_text(json.dumps(payload, separators=(",", ":")))
+stats["rrg_sectors"] = len(payload["sectors"])
+stats["rrg_weeks"] = len(payload["weeks"])
+print(f"  sectors.json    {len(payload['sectors'])} sectors x {len(payload['weeks'])} weeks, "
+      f"{(OUT/'sectors.json').stat().st_size // 1024} KB")
+
+(OUT / "charts.json").write_text(json.dumps(stats, indent=1))
+print(json.dumps(stats))

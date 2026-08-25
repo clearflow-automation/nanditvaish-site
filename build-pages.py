@@ -186,6 +186,15 @@ figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-he
   border-radius:2px;padding:.4rem .85rem;cursor:pointer;min-width:5.5rem}
 .play__ctl input{flex:1;min-width:10rem;accent-color:var(--kill)}
 
+/* ---------- interactive: sector rotation ---------- */
+.rrg{margin:2.5rem 0}
+.rrg__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2)}
+.rrg__stage canvas{width:100%;display:block}
+.rrg__ctl{display:flex;align-items:center;gap:.9rem;margin-top:.9rem;flex-wrap:wrap}
+.rrg__ctl input{flex:1;min-width:10rem;accent-color:var(--kill)}
+.rrg__date{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
+  color:var(--ink-2);min-width:7rem}
+
 /* ---------- interactive: verdict timeline ---------- */
 .tl{margin:2.25rem 0;overflow-x:auto}
 .tl svg{width:100%;min-width:40rem;height:auto;display:block;overflow:visible}
@@ -385,6 +394,15 @@ def player(prefix, years, label, caption):
             f'<input type="range" min="0" max="{len(years)-1}" value="0" step="1" '
             f'aria-label="{label} year"></div>'
             f'<p class="mapx__cap">{caption}</p></div>')
+
+
+def rrg():
+    return ('<div class="rrg"><div class="rrg__stage">'
+            '<canvas id="rrgc" width="1240" height="780" '
+            'aria-label="Sector rotation: relative strength against its own momentum, animated weekly"></canvas></div>'
+            '<div class="rrg__ctl"><button class="play__btn" id="rrgb">Play</button>'
+            '<input type="range" id="rrgr" min="8" max="10" value="8" step="1" '
+            'aria-label="Week"><span class="rrg__date" id="rrgd"></span></div></div>')
 
 
 FILL = [("cam_daily_long", 1.64, -0.30), ("cpr_daily_long", 1.72, -0.23),
@@ -622,6 +640,62 @@ def shell(slug, title, desc, body, og=""):
   }});
 }})();
 
+/* sector rotation */
+(function(){{
+  var cv=document.getElementById('rrgc'); if(!cv)return;
+  var btn=document.getElementById('rrgb'), rng=document.getElementById('rrgr'),
+      dt=document.getElementById('rrgd'), ctx=cv.getContext('2d'), D=null, t=null;
+  var PAL=['#e0705f','#2f9e83','#f2b45c','#7aa2f7','#c792ea','#8fbf6d','#e39fc2',
+           '#5fb4c9','#d0885f','#9aa5ce','#c9c05f','#6fcf97','#bf6f8f'];
+  var W=cv.width,H=cv.height,CX=W/2,CY=H/2,S=34;   // px per unit around 100,100
+  function px(v){{return CX+(v-100)*S}}
+  function py(v){{return CY-(v-100)*S}}
+  function draw(i){{
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0a0b0d';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(47,158,131,.05)';ctx.fillRect(CX,0,W-CX,CY);
+    ctx.fillStyle='rgba(174,47,34,.05)';ctx.fillRect(0,CY,CX,H-CY);
+    ctx.strokeStyle='#23262c';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(CX,0);ctx.lineTo(CX,H);ctx.moveTo(0,CY);ctx.lineTo(W,CY);ctx.stroke();
+    ctx.font='11px "IBM Plex Mono",monospace';ctx.fillStyle='#5c636d';
+    ctx.fillText('IMPROVING',14,20);ctx.fillText('LEADING',W-76,20);
+    ctx.fillText('LAGGING',14,H-12);ctx.fillText('WEAKENING',W-86,H-12);
+    D.sectors.forEach(function(sec,k){{
+      var col=PAL[k%PAL.length];
+      ctx.strokeStyle=col;ctx.globalAlpha=.55;ctx.lineWidth=1.4;ctx.beginPath();
+      var moved=false;
+      for(var j=Math.max(0,i-8);j<=i;j++){{
+        var x=sec.x[j],y=sec.y[j];
+        if(x==null||y==null)continue;
+        var X=px(x),Y=py(y);
+        if(!moved){{ctx.moveTo(X,Y);moved=true}}else ctx.lineTo(X,Y);
+      }}
+      ctx.stroke();ctx.globalAlpha=1;
+      var x=sec.x[i],y=sec.y[i]; if(x==null||y==null)return;
+      var X=px(x),Y=py(y);
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(X,Y,5,0,7);ctx.fill();
+      ctx.fillText(sec.code,X+8,Y+4);
+    }});
+    dt.textContent=D.weeks[i];rng.value=i;
+  }}
+  function stop(){{clearInterval(t);t=null;btn.textContent='Play'}}
+  fetch('/assets/charts/sectors.json').then(function(r){{return r.json()}})
+  .then(function(d){{
+    D=d;rng.max=d.weeks.length-1;rng.value=d.weeks.length-1;
+    draw(d.weeks.length-1);
+    btn.addEventListener('click',function(){{
+      if(t)return stop();
+      btn.textContent='Pause';
+      var i=+rng.value; if(i>=d.weeks.length-1)i=8;
+      t=setInterval(function(){{
+        i++;if(i>=d.weeks.length){{stop();return}}
+        draw(i);
+      }},110);
+    }});
+    rng.addEventListener('input',function(){{stop();draw(+rng.value)}});
+  }});
+}})();
+
 /* verdict timeline */
 (function(){{
   var read=document.getElementById('tlread'); if(!read)return;
@@ -782,6 +856,19 @@ market = head(
         rule("Relative strength, index regime and breadth are a risk dial, not a return "
              "booster. Tested both ways, they work as gates and add approximately "
              "nothing as scoring features."),
+        plate("/assets/charts/breadth.png",
+              f"The dial itself, computed from the store: the share of all "
+              f"{CH.get('symbols',502)} names above their own 50- and 200-day averages, "
+              f"2021 to date. Green when the majority is participating, red when it is "
+              f"not. Today it reads {CH.get('breadth_now_50',0)}% and "
+              f"{CH.get('breadth_now_200',0)}%.",
+              "Breadth of the universe above its own moving averages since 2021"),
+        p("And the rotation the hub&rsquo;s sector tab watches, running on the real "
+          "data. Each dot is a sector&rsquo;s relative strength against the universe, "
+          "plotted against the momentum of that strength; the tail is its last eight "
+          "weeks. Press play and watch " + str(CH.get('rrg_weeks', 270)) + " weeks of "
+          "money moving between sectors:"),
+        rrg(),
     ]),
     entry("07", "June &ndash; July 2026", "The options detour", [
         p("Two gigabytes of one-minute option chains across twelve underlyings, "
@@ -919,6 +1006,15 @@ market = head(
           "their sign. A clean null, not an inconclusive one."),
         p("The durable output is not a signal. It is this, measured on a real account&rsquo;s "
           "actual behaviour:"),
+        plate("/assets/charts/kabaddi.png",
+              "The table above, drawn. Each bar spans from what the book earns each "
+              "year (top cap) down to the worst drawdown it takes on the way (bottom "
+              "cap). De-sizing on the left of each pair, off on the right. At "
+              "10&times; without de-sizing the median outcome is &minus;94.9% and the "
+              "fifth percentile is &minus;99.7 &mdash; ruin, on a book with positive "
+              "expectancy. These are the notebook&rsquo;s simulation results, drawn "
+              "as published, not recomputed.",
+              "Leverage against survival: CAGR versus maximum drawdown per configuration"),
         table(["Leverage", "With de-sizing", "Without de-sizing"],
               [["1&times;", "+4.7% CAGR &middot; −15.7% DD", "+6.9% &middot; −19.3%"],
                ["3&times;", "+7.8% &middot; −28.4%", "+16.8% &middot; −49.9%"],
