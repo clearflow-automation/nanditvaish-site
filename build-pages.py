@@ -100,6 +100,64 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
 .vd-open{color:#8a6a1f;border-color:#8a6a1f}
 .vd-discount,.vd-tool,.vd-retired{color:var(--ink-3);border-color:var(--rule-2)}
 
+/* ---------- interactive: layer switcher ---------- */
+.mapx{margin:2.25rem 0 0}
+.mapx__keys{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.9rem}
+.mapx__keys button{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
+  text-transform:uppercase;background:none;border:1px solid var(--rule-2);border-radius:2px;
+  padding:.35rem .7rem;cursor:pointer;color:var(--ink-2)}
+.mapx__keys button:hover{border-color:var(--ink)}
+.mapx__keys button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mapx__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2);
+  aspect-ratio:16/10;overflow:hidden}
+.mapx__stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  opacity:0;transition:opacity .45s ease}
+.mapx__stage img.on{opacity:1}
+.mapx__cap{font-family:var(--mono);font-size:.75rem;color:var(--ink-2);margin-top:.9rem;
+  max-width:46rem;min-height:2.4em}
+
+/* ---------- interactive: render ladder ---------- */
+.ladder{margin:2.25rem 0 0}
+.ladder__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2);
+  aspect-ratio:16/9;overflow:hidden}
+.ladder__stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .4s ease}
+.ladder__stage img.on{opacity:1}
+.ladder__ctl{display:flex;align-items:center;gap:1rem;margin-top:.9rem;flex-wrap:wrap}
+.ladder__ctl input{flex:1;min-width:12rem;accent-color:var(--kill)}
+.ladder__n{font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-2);min-width:9rem}
+.ladder__cap{font-family:var(--mono);font-size:.75rem;color:var(--ink-2);margin-top:.6rem;
+  max-width:46rem;min-height:2.4em}
+
+/* ---------- interactive: fill chart ---------- */
+.fillc{margin:1.75rem 0 0;max-width:46rem}
+.fillc__row{display:grid;grid-template-columns:9.5rem 1fr;gap:1rem;align-items:center;
+  padding:.55rem 0;border-bottom:1px solid var(--rule)}
+.fillc__lab{font-family:var(--mono);font-size:.75rem;color:var(--ink-2)}
+.fillc__track{position:relative;height:1.4rem;background:linear-gradient(
+  90deg,transparent calc(50% - .5px),var(--rule-2) calc(50% - .5px),
+  var(--rule-2) calc(50% + .5px),transparent calc(50% + .5px))}
+.fillc__bar{position:absolute;top:.25rem;height:.9rem;
+  transition:left .6s cubic-bezier(.2,.7,.3,1),width .6s cubic-bezier(.2,.7,.3,1),
+  background .6s ease}
+.fillc__val{position:absolute;top:0;font-family:var(--mono);font-size:.6875rem;
+  line-height:1.4rem;color:var(--ink-2);transition:left .6s cubic-bezier(.2,.7,.3,1)}
+.fillc__toggle{display:flex;gap:.4rem;margin-bottom:1rem}
+.fillc__toggle button{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
+  text-transform:uppercase;background:none;border:1px solid var(--rule-2);border-radius:2px;
+  padding:.35rem .7rem;cursor:pointer;color:var(--ink-2)}
+.fillc__toggle button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* ---------- interactive: verdict timeline ---------- */
+.tl{margin:1.75rem 0 0}
+.tl svg{width:100%;height:auto;display:block;overflow:visible}
+.tl__dot{cursor:pointer;transition:r .15s ease}
+.tl__dot:hover{r:6}
+.tl__read{font-family:var(--mono);font-size:.75rem;color:var(--ink-2);margin-top:1rem;
+  min-height:3.4em;max-width:46rem}
+.tl__read b{color:var(--ink);font-weight:500}
+
 /* ---------- rising bar ---------- */
 .bar{padding:3.5rem 0;border-top:1px solid var(--ink)}
 .bar ol{list-style:none;margin:1.75rem 0 0;padding:0;counter-reset:b}
@@ -147,6 +205,130 @@ def plate(src, caption, alt=""):
             f'loading="lazy" decoding="async"><figcaption>{caption}</figcaption></figure>')
 
 
+MAPS = [
+    ("drift", "Change", "Cosine distance between each cell&rsquo;s fingerprint this year "
+     "and last. Bright means the surface changed. This is the layer we built the whole "
+     "instrument to produce &mdash; and the one the referee later showed measures "
+     "volatility rather than development."),
+    ("built", "Built-up", "Share of each cell that is built. Nobody drew these cities; "
+     "they are the layer reading itself out. The road corridors between them are visible "
+     "without being labelled."),
+    ("cluster", "Land types", "Twelve clusters over the 64-dimensional embedding. Land "
+     "cover was joined in specifically so a cluster could be given a real name instead "
+     "of a number."),
+    ("pop", "Population", "2020, which is where the free data stops. Reading this layer "
+     "correctly took two attempts &mdash; a negative window offset had Delhi at 263 "
+     "people per square kilometre instead of 23,452."),
+    ("rain", "Rainfall", "Annual total. Rainfall <i>level</i> turned out not to move the "
+     "land surface at all. Rainfall <i>volatility</i> does, at a rank correlation of "
+     "0.357 against a null of zero."),
+    ("elev", "Elevation", "The Himalaya, the Western Ghats and the Deccan plateau, drawn "
+     "only from cell elevation. Useful mostly as a sanity check that the joins land where "
+     "the geography says they should."),
+]
+
+
+def mapswitch():
+    keys = "".join(
+        f'<button class="{"on" if i == 0 else ""}" data-m="{k}" data-cap="{e(c)}">{lbl}</button>'
+        for i, (k, lbl, c) in enumerate(MAPS))
+    imgs = "".join(
+        f'<img class="{"on" if i == 0 else ""}" data-m="{k}" src="/assets/maps/{k}.jpg" '
+        f'alt="India rendered by {lbl.lower()}" loading="lazy" decoding="async">'
+        for i, (k, lbl, _) in enumerate(MAPS))
+    return (f'<div class="mapx"><div class="mapx__keys">{keys}</div>'
+            f'<div class="mapx__stage">{imgs}</div>'
+            f'<p class="mapx__cap">{MAPS[0][2]}</p></div>')
+
+
+LADDER = [
+    ("The empty street, wide", "The finished set with nobody in it. The camera sits well "
+     "back and takes in the whole block &mdash; magenta on the left, the diner sign on "
+     "the right, everything already reflecting in the wet road."),
+    ("Camera moved in", "The same street from a different position, with a warmer read "
+     "on the signage. No new geometry, no new materials. Just a second opinion about "
+     "where to stand."),
+    ("A walker, crossing", "The first figure, moving across the frame at a distance. It "
+     "immediately changes what the street is for &mdash; the reflections now have "
+     "something to be near."),
+    ("Turned toward the lens", "Same camera, the walk redirected. The street stops being "
+     "a backdrop and becomes somewhere a person is going."),
+    ("Rain, and far too much of it", "The particle system goes in and flattens "
+     "everything. The neon is washed out, the figure is a smudge, the road is gone. This "
+     "pass is kept because the overshoot is the useful part &mdash; you cannot tune a "
+     "thing you have not yet pushed past."),
+    ("Rain, pulled back", "Density down, figure forward, the signage readable again. "
+     "This is the frame the site opens on."),
+]
+
+
+def ladder():
+    imgs = "".join(
+        f'<img class="{"on" if i == 0 else ""}" data-l="{i}" '
+        f'src="/assets/plates/ladder-pass{i+1}.jpg" alt="Render pass {i+1}: {t}" '
+        f'loading="lazy" decoding="async">' for i, (t, _) in enumerate(LADDER))
+    caps = json.dumps([[t, c] for t, c in LADDER])
+    return (f'<div class="ladder" data-caps=\'{caps}\'>'
+            f'<div class="ladder__stage">{imgs}</div>'
+            f'<div class="ladder__ctl"><span class="ladder__n" id="ladn">Pass 1 &mdash; '
+            f'{LADDER[0][0]}</span>'
+            f'<input type="range" min="0" max="{len(LADDER)-1}" value="0" step="1" '
+            f'id="ladr" aria-label="Render pass"></div>'
+            f'<p class="ladder__cap" id="ladc">{LADDER[0][1]}</p></div>')
+
+
+FILL = [("cam_daily_long", 1.64, -0.30), ("cpr_daily_long", 1.72, -0.23),
+        ("cam_1H_short", 0.50, -0.13), ("cpr_1H_short", 0.51, -0.14)]
+
+
+def fillchart():
+    rows = ""
+    for name, modelled, honest in FILL:
+        rows += (f'<div class="fillc__row" data-m="{modelled}" data-h="{honest}">'
+                 f'<span class="fillc__lab">{name}</span>'
+                 f'<span class="fillc__track"><i class="fillc__bar"></i>'
+                 f'<span class="fillc__val"></span></span></div>')
+    return ('<div class="fillc">'
+            '<div class="fillc__toggle">'
+            '<button class="on" data-f="m">What we modelled</button>'
+            '<button data-f="h">What we could actually fill</button></div>'
+            f"{rows}</div>")
+
+
+def timeline(threads):
+    """Every thread on a real date axis, coloured by verdict."""
+    months = sorted({t.get("date", "")[:7] for t in threads if t.get("date")})
+    if not months:
+        return ""
+    idx = {m: i for i, m in enumerate(months)}
+    W_, H_, PAD = 1000, 250, 34
+    step = (W_ - PAD * 2) / max(len(months) - 1, 1)
+    lanes = {}
+    dots = ""
+    COL = {"DEAD": "#ae2f22", "TRUST": "#1c6553", "OPEN": "#8a6a1f"}
+    for t in threads:
+        d = t.get("date", "")[:7]
+        if d not in idx:
+            continue
+        x = PAD + idx[d] * step
+        lanes[d] = lanes.get(d, 0) + 1
+        y = H_ - PAD - (lanes[d] - 1) * 11
+        c = COL.get(t.get("verdict"), "#8b9098")
+        dots += (f'<circle class="tl__dot" cx="{x:.1f}" cy="{y:.1f}" r="4" fill="{c}" '
+                 f'data-n="{e(t["name"])}" data-v="{t.get("verdict","")}" '
+                 f'data-f="{e(t.get("finding",""))[:190]}"></circle>')
+    ticks = "".join(
+        f'<text x="{PAD + i*step:.1f}" y="{H_-10}" text-anchor="middle" '
+        f'font-family="IBM Plex Mono,monospace" font-size="11" fill="#8b9098">{m[5:]}/{m[2:4]}</text>'
+        for i, m in enumerate(months))
+    return (f'<div class="tl"><svg viewBox="0 0 {W_} {H_}" role="img" '
+            f'aria-label="Every research thread plotted by the month it concluded">'
+            f'<line x1="{PAD}" y1="{H_-PAD+8}" x2="{W_-PAD}" y2="{H_-PAD+8}" '
+            f'stroke="#c9c0ad"></line>{ticks}{dots}</svg>'
+            f'<p class="tl__read" id="tlread">Hover any dot. Each one is a hypothesis, '
+            f'placed on the month it was concluded and coloured by its verdict.</p></div>')
+
+
 def entry(no, when, title, blocks):
     return (f'<section class="ent"><div class="col-wide">'
             f'<div class="ent__top"><span class="ent__no">{no}</span>'
@@ -155,9 +337,14 @@ def entry(no, when, title, blocks):
 
 
 # ------------------------------------------------------------- the yard ----
-def graveyard():
+def load_threads():
     cat = json.loads((OUT / "assets/research_catalog.json").read_text())
-    th = cat if isinstance(cat, list) else next(v for v in cat.values() if isinstance(v, list))
+    return cat if isinstance(cat, list) else next(
+        v for v in cat.values() if isinstance(v, list))
+
+
+def graveyard():
+    th = load_threads()
     order = {"DEAD": 0, "DISCOUNT": 1, "RETIRED": 2, "TOOL": 3, "OPEN": 4, "TRUST": 5}
     th = sorted(th, key=lambda t: (order.get(t.get("verdict"), 9), t.get("date", "")))
     items = ""
@@ -182,6 +369,7 @@ def graveyard():
             f'finding that ended it. Forty-one are dead. We are naming all of them, '
             f'because a list of what did not work is the only honest way to read a list '
             f'of what did.</p>'
+            f'{timeline(th)}'
             f'<div class="yard__filter">{btns}</div>{items}</div></section>')
 
 
@@ -217,6 +405,7 @@ def shell(slug, title, desc, body, og=""):
   <p><a href="/">All work</a> &middot; <a href="mailto:vaishnandit@gmail.com">vaishnandit@gmail.com</a></p>
 </div></footer>
 <script>
+/* graveyard filter */
 (function(){{
   var bs=[].slice.call(document.querySelectorAll('.yard__filter button'));
   if(!bs.length)return;
@@ -227,6 +416,79 @@ def shell(slug, title, desc, body, og=""):
     cards.forEach(function(c){{
       c.style.display=(f==='ALL'||c.dataset.v===f)?'':'none';}});
   }})}});
+}})();
+
+/* layer switcher */
+(function(){{
+  var keys=[].slice.call(document.querySelectorAll('.mapx__keys button'));
+  if(!keys.length)return;
+  var imgs=[].slice.call(document.querySelectorAll('.mapx__stage img')),
+      cap=document.querySelector('.mapx__cap');
+  keys.forEach(function(b){{b.addEventListener('click',function(){{
+    keys.forEach(function(x){{x.classList.toggle('on',x===b)}});
+    imgs.forEach(function(i){{i.classList.toggle('on',i.dataset.m===b.dataset.m)}});
+    cap.innerHTML=b.dataset.cap;
+  }})}});
+}})();
+
+/* render ladder */
+(function(){{
+  var wrap=document.querySelector('.ladder'); if(!wrap)return;
+  var caps=JSON.parse(wrap.dataset.caps),
+      imgs=[].slice.call(wrap.querySelectorAll('img')),
+      r=document.getElementById('ladr'),
+      n=document.getElementById('ladn'),
+      c=document.getElementById('ladc');
+  function set(i){{
+    imgs.forEach(function(im){{im.classList.toggle('on',+im.dataset.l===i)}});
+    n.innerHTML='Pass '+(i+1)+' &mdash; '+caps[i][0];
+    c.innerHTML=caps[i][1];
+  }}
+  r.addEventListener('input',function(){{set(+r.value)}});
+}})();
+
+/* fill chart */
+(function(){{
+  var wrap=document.querySelector('.fillc'); if(!wrap)return;
+  var rows=[].slice.call(wrap.querySelectorAll('.fillc__row')),
+      bts=[].slice.call(wrap.querySelectorAll('.fillc__toggle button')),
+      MAX=2.0;
+  function draw(which){{
+    rows.forEach(function(row){{
+      var v=parseFloat(row.dataset[which==='m'?'m':'h']),
+          bar=row.querySelector('.fillc__bar'),
+          val=row.querySelector('.fillc__val'),
+          w=Math.abs(v)/MAX*50;
+      bar.style.width=w+'%';
+      bar.style.left=(v>=0?50:50-w)+'%';
+      bar.style.background=v>=0?'var(--live)':'var(--kill)';
+      val.textContent=(v>0?'+':'')+v.toFixed(2)+'%';
+      val.style.left=(v>=0?50+w+1.5:50-w-7)+'%';
+      val.style.color=v>=0?'var(--live)':'var(--kill)';
+    }});
+  }}
+  bts.forEach(function(b){{b.addEventListener('click',function(){{
+    bts.forEach(function(x){{x.classList.toggle('on',x===b)}});
+    draw(b.dataset.f);
+  }})}});
+  draw('m');
+}})();
+
+/* verdict timeline */
+(function(){{
+  var read=document.getElementById('tlread'); if(!read)return;
+  var base=read.innerHTML;
+  [].slice.call(document.querySelectorAll('.tl__dot')).forEach(function(d){{
+    function show(){{
+      read.innerHTML='<b>'+d.dataset.n+'</b> &middot; '+d.dataset.v+'<br>'+d.dataset.f;
+    }}
+    d.addEventListener('mouseenter',show);
+    d.addEventListener('focus',show);
+    d.setAttribute('tabindex','0');
+  }});
+  document.querySelector('.tl svg').addEventListener('mouseleave',function(){{
+    read.innerHTML=base;
+  }});
 }})();
 </script></body></html>"""
 
@@ -308,6 +570,8 @@ market = head(
               "All four sleeves, gross, before costs. Only about 37% of trades ever "
               "reach an exit that beats the confirming close &mdash; for the other 63% "
               "the move is finished before you can act."),
+        p("Flip between the two and watch every sleeve cross the line:"),
+        fillchart(),
         pull("The signal is a lagging report that the move already happened."),
         p("Then we tried to rescue it. A stop order resting at the level fills on the "
           "touch, in real time &mdash; but it drags in exactly the fakeouts the closing "
@@ -515,12 +779,12 @@ research = head(
           "terabytes of source becomes 242 megabytes by choosing the right level."),
         rule("Resolution is a decision, not a constraint. Most of the cost of a large "
              "dataset is spent before anyone asks how much detail the question needs."),
-        plate("/assets/plates/grid-poster.jpg",
-              "India as 318,706 cells, coloured by how much each one changed. "
-              "The faint curved seams across the north are a known-open bug in the UTM "
-              "zone joins &mdash; disclosed in the data dictionary, and left visible "
-              "here rather than retouched.",
-              "India rendered as a grid of cells coloured by change"),
+        p("Every layer below is drawn from the same 318,706 cells. Switch between them "
+          "&mdash; the country is the same, only the question changes:"),
+        mapswitch(),
+        p("<i>The faint curved seams across the north are a known-open bug in the UTM "
+          "zone joins. They are disclosed in the data dictionary and left visible here "
+          "rather than retouched out.</i>"),
     ]),
     entry("03", "26 July 2026, 00:17", "A second domain, the same night", [
         p("Three hours after the first grid finished, we pointed the same method at "
@@ -648,10 +912,10 @@ film = head(
           "&mdash; comparison against reality, deliberately: <i>the wires are straight, "
           "and in reality wires are tangled, they have smaller wires wrapped around "
           "them, they are never this straight, they sag in the middle.</i>"),
-        plate("/assets/plates/street-poster.jpg",
-              "One frame from the sixth pass. Everything visible here is a primitive "
-              "shape with a hand-built material on it.",
-              "A neon-lit wet street at night, seen from behind a walking figure"),
+        p("Drag through the six render passes. The set never changes across them "
+          "&mdash; what changes is where the camera stands, who is in the shot, and how "
+          "hard it is raining:"),
+        ladder(),
         rule("The bottleneck was never the engine. It was review latency &mdash; "
              "&ldquo;do I have to render it every time to see what&rsquo;s happening?&rdquo; "
              "Everything good that came later descends from that question."),
