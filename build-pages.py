@@ -960,6 +960,13 @@ research = head(
         p("Summing counts over overlapping sample boxes gave India 1.75 billion people "
           "instead of 1.34 billion. Correct arithmetic on a wrong assumption: with "
           "overlapping windows you must take the mean, not the sum."),
+        plate("/assets/maps/pop.jpg",
+              "The population layer, read correctly. This is the plate that came back "
+              "with Delhi at 263 people per square kilometre the first time &mdash; and "
+              "it looked fine. Nothing about a shifted raster announces itself; the "
+              "coastline still traces, the Gangetic plain is still bright. Only the "
+              "cross-check against the census caught it.",
+              "India rendered by population density"),
         rule("The bugs that matter do not crash. They return a plausible number, and the "
              "only defence is an external cross-check &mdash; total land area against "
              "the published figure, total population against the census."),
@@ -968,6 +975,16 @@ research = head(
         p("A hundred and thirty-two megabytes of binary layers, twelve views, a year "
           "slider with playback. It is the prettiest thing in the project and the least "
           "load-bearing. It looks like an answer."),
+        plate("/assets/maps/cluster.jpg",
+              "Twelve land types, clustered over the embedding. This is the view that "
+              "does the most damage &mdash; it is beautiful, it is obviously "
+              "<i>structured</i>, and structure is exactly what a person goes looking "
+              "for. Six weeks later the referee showed that the layer underneath it "
+              "cannot detect the thing we built it to detect.",
+              "India rendered as twelve land-type clusters"),
+        rule("A dashboard is a claim with the evidence removed. Everything on this one "
+             "was true and none of it had been tested, and for a month nobody noticed "
+             "the difference &mdash; including us."),
         go("/work/india-grid/", "Open the explorer"),
     ]),
     entry("06", "21 August 2026, 01:18", "The referee night", [
