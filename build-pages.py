@@ -256,6 +256,9 @@ def plate(src, caption, alt=""):
             f'loading="lazy" decoding="async"><figcaption>{caption}</figcaption></figure>')
 
 
+_cf = OUT / "assets/charts/charts.json"
+CH = json.loads(_cf.read_text()) if _cf.exists() else {}
+
 _sf = OUT / "assets/maps/series.json"
 SERIES = json.loads(_sf.read_text()) if _sf.exists() else {}
 
@@ -686,6 +689,13 @@ market = head(
           "that fix it had been silently discarding pre-2010 days, because it was "
           "judging 2004 by how many symbols trade in 2025. Rows are removed; values are "
           "never touched."),
+        plate("/assets/charts/store.png",
+              f"The store itself: symbols with data, per year, {CH.get('rows',0):,} "
+              "deduplicated daily rows across "
+              f"{CH.get('symbols',502)} names. The early years sit far below today&rsquo;s "
+              "coverage, which is exactly why the cleaner judges each date against "
+              "<i>its own year&rsquo;s</i> active names rather than 2025&rsquo;s.",
+              "Bar chart of symbols with data per year, 2000 to 2026"),
         rule("Clean by a rule that assumes today&rsquo;s market and you will quietly "
              "delete the past."),
     ]),
@@ -724,6 +734,15 @@ market = head(
               "the move is finished before you can act."),
         p("Flip between the two and watch every sleeve cross the line:"),
         fillchart(),
+        plate("/assets/charts/gap.png",
+              f"The gap, recomputed from the store for this page: every close beyond "
+              f"the previous day&rsquo;s H4 across all {CH.get('symbols',502)} names and "
+              f"twenty-six years &mdash; {CH.get('gap_n',0):,} confirmations, median "
+              f"{CH.get('gap_median',0)}% past the level, using the repository&rsquo;s own "
+              "formula. The notebook&rsquo;s ~1.95% was measured on its filtered signal "
+              "population; unconditionally the median is smaller and the argument is the "
+              "same. Everything red was never fillable at the level.",
+              "Histogram of how far beyond the level the confirming close sits"),
         pull("The signal is a lagging report that the move already happened."),
         p("Then we tried to rescue it. A stop order resting at the level fills on the "
           "touch, in real time, but it drags in exactly the fakeouts the closing "
@@ -845,6 +864,15 @@ market = head(
               "off, so the watchlist is what the rules <i>would</i> buy and the position "
               "count is zero out of ten. The rupee figures are simulated capital.",
               "The GATI paper book, showing equity, watchlist and fill assumptions"),
+        plate("/assets/charts/regimes.png",
+              f"The tape the book traded into, computed from the store: the universe, "
+              f"equal-weight, indexed to 100 at January 2021. It compounds at "
+              f"+{CH.get('regime1_cagr',0)}% a year through 2021&ndash;23 and "
+              f"+{CH.get('regime2_cagr',0)}% after &mdash; the same regime split, in the "
+              "market itself. One caveat this page has already taught: this is "
+              "today&rsquo;s 502-name list projected backwards, so the early segment "
+              "carries survivorship shine.",
+              "Equal-weight index of the universe from 2021, split at the 2024 regime boundary"),
         rule("Quote the regime numbers, never the headline. A single figure spanning "
              "two regimes is an average of two different businesses."),
     ]),
