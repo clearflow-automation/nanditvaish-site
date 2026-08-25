@@ -74,7 +74,7 @@ figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-he
 .figplate figcaption{padding:.9rem 1.1rem;margin:0;color:#b9c0c9;
   border-top:1px solid #23262c;background:var(--plate)}
 
-.go{display:inline-block;margin-top:1.75rem;font-family:var(--mono);font-size:.6875rem;
+.go{display:inline-block;margin:1.75rem 0;font-family:var(--mono);font-size:.6875rem;
   letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid var(--rule-2);
   padding-bottom:.15rem}
 .go:hover{border-color:var(--ink)}
@@ -1456,10 +1456,10 @@ operations = head(
           "merely looks clever. That habit of testing looks on a live page became "
           "the mood system Lantern runs on today."),
         plate("/assets/ops/clearflow.jpg",
-              'Still live: <a href="https://clearflow-automation.github.io/clearflow/">'
-              "the ClearFlow site</a>, serving as the studio&rsquo;s permanent record "
-              "of its first swing.",
-              "The ClearFlow marketing site"),
+              "The studio&rsquo;s permanent record of its first swing.",
+              "The ClearFlow marketing site's headline"),
+        go("https://clearflow-automation.github.io/clearflow/",
+           "Visit the ClearFlow site, still live"),
         p("It is parked, and not because the machinery failed: selling hands-on "
           "automation from half a world away never found its footing, while the same "
           "machinery pointed at shops twenty minutes from the desk worked "
