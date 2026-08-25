@@ -149,6 +149,40 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
   padding:.35rem .7rem;cursor:pointer;color:var(--ink-2)}
 .fillc__toggle button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 
+/* ---------- film: player + scene grid ---------- */
+.vid{margin:2.25rem 0 0;background:var(--plate);border:1px solid var(--rule-2)}
+.vid video{width:100%;display:block;background:var(--plate)}
+.vid figcaption{padding:.85rem 1rem;margin:0;color:var(--ink-3);
+  border-top:1px solid #23262c;background:var(--plate)}
+.scenes{margin:2.25rem 0 0;display:grid;gap:.5rem;
+  grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.scenes figure{margin:0;background:var(--plate);border:1px solid var(--rule-2);
+  overflow:hidden;cursor:zoom-in}
+.scenes img{width:100%;display:block;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+.scenes figure:hover img{transform:scale(1.03)}
+.scenes figcaption{font-family:var(--mono);font-size:.6875rem;color:var(--ink-3);
+  padding:.5rem .7rem;margin:0;border-top:1px solid #23262c;line-height:1.5}
+.lb{position:fixed;inset:0;background:rgba(7,9,12,.94);display:none;z-index:50;
+  align-items:center;justify-content:center;padding:2rem;cursor:zoom-out}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:100%;object-fit:contain}
+
+/* ---------- interactive: time player ---------- */
+.play{margin:2.25rem 0 0}
+.play__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2);
+  aspect-ratio:16/10;overflow:hidden}
+.play__stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  opacity:0}
+.play__stage img.on{opacity:1}
+.play__yr{position:absolute;left:1rem;top:.85rem;font-family:var(--mono);
+  font-size:1.5rem;color:#f2f4f7;letter-spacing:.04em;
+  text-shadow:0 2px 14px rgba(7,9,12,.9)}
+.play__ctl{display:flex;align-items:center;gap:.9rem;margin-top:.9rem;flex-wrap:wrap}
+.play__btn{font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;
+  text-transform:uppercase;background:var(--ink);color:var(--paper);border:1px solid var(--ink);
+  border-radius:2px;padding:.4rem .85rem;cursor:pointer;min-width:5.5rem}
+.play__ctl input{flex:1;min-width:10rem;accent-color:var(--kill)}
+
 /* ---------- interactive: verdict timeline ---------- */
 .tl{margin:1.75rem 0 0}
 .tl svg{width:100%;height:auto;display:block;overflow:visible}
@@ -204,6 +238,9 @@ def plate(src, caption, alt=""):
     return (f'<figure class="figplate"><img src="{src}" alt="{e(alt or caption)}" '
             f'loading="lazy" decoding="async"><figcaption>{caption}</figcaption></figure>')
 
+
+_sf = OUT / "assets/maps/series.json"
+SERIES = json.loads(_sf.read_text()) if _sf.exists() else {}
 
 MAPS = [
     ("drift", "Change", "Cosine distance between each cell&rsquo;s fingerprint this year "
@@ -275,6 +312,59 @@ def ladder():
             f'<input type="range" min="0" max="{len(LADDER)-1}" value="0" step="1" '
             f'id="ladr" aria-label="Render pass"></div>'
             f'<p class="ladder__cap" id="ladc">{LADDER[0][1]}</p></div>')
+
+
+SCENES = [
+    ("f01", "The price, cold open"), ("f02", "A human, and a humanoid, to scale"),
+    ("f03", "Fifty degrees of freedom, twenty-two of them in the hand"),
+    ("f04", "The comparison the whole film keeps returning to"),
+    ("f05", "Sensors are 37% of the bill of materials. The battery is 0.5%"),
+    ("f06", "The hands alone: $9,315"),
+    ("f07", "Question card &mdash; none of this scales until it gets cheap"),
+    ("f08", "The timeline opens"), ("f09", "Ten years of almost nothing"),
+    ("f10", "Six models unveiled in 2022. Fifty-one in 2024"),
+    ("f11", "Price falls, capability lands, adoption goes vertical"),
+    ("f12", "One becomes a hundred, a hundred becomes a million"),
+    ("f13", "A billion in use by 2050"),
+    ("f14", "$5 trillion a year &mdash; twice the global auto industry"),
+    ("f15", "The crowd, at scale"),
+    ("f16", "930 million at work. 80 million in homes"),
+    ("f17", "One household in ten, and the last place they arrive"),
+    ("f18", "China 302m against America&rsquo;s 78m. Patents, 5,688 against 1,483"),
+]
+
+
+def filmplayer():
+    return ('<figure class="vid"><video controls preload="metadata" '
+            'poster="/assets/plates/film-poster.jpg" '
+            'src="/assets/film/humanoids-2050.mp4"></video>'
+            '<figcaption>Humanoids 2050 &mdash; three minutes, twenty-five scenes, '
+            'narrated by Nandit. This is the compressed build; the master is 80 MB.'
+            '</figcaption></figure>')
+
+
+def scenes():
+    figs = "".join(
+        f'<figure data-full="/assets/film/frames/{k}.jpg">'
+        f'<img src="/assets/film/frames/{k}.jpg" alt="{e(c)}" loading="lazy" '
+        f'decoding="async"><figcaption>{c}</figcaption></figure>'
+        for k, c in SCENES)
+    return f'<div class="scenes">{figs}</div><div class="lb" id="lb"><img alt=""></div>'
+
+
+def player(prefix, years, label, caption):
+    imgs = "".join(
+        f'<img class="{"on" if i == 0 else ""}" data-i="{i}" '
+        f'src="/assets/maps/{prefix}-{y}.jpg" alt="India, {label}, {y}" '
+        f'loading="lazy" decoding="async">' for i, y in enumerate(years))
+    ys = json.dumps(years)
+    return (f'<div class="play" data-years=\'{ys}\'>'
+            f'<div class="play__stage">{imgs}'
+            f'<span class="play__yr">{years[0]}</span></div>'
+            f'<div class="play__ctl"><button class="play__btn">Play</button>'
+            f'<input type="range" min="0" max="{len(years)-1}" value="0" step="1" '
+            f'aria-label="{label} year"></div>'
+            f'<p class="mapx__cap">{caption}</p></div>')
 
 
 FILL = [("cam_daily_long", 1.64, -0.30), ("cpr_daily_long", 1.72, -0.23),
@@ -472,6 +562,44 @@ def shell(slug, title, desc, body, og=""):
     draw(b.dataset.f);
   }})}});
   draw('m');
+}})();
+
+/* time player */
+[].slice.call(document.querySelectorAll('.play')).forEach(function(w){{
+  var years=JSON.parse(w.dataset.years),
+      imgs=[].slice.call(w.querySelectorAll('img')),
+      yr=w.querySelector('.play__yr'),
+      btn=w.querySelector('.play__btn'),
+      rng=w.querySelector('input'), t=null;
+  function set(i){{
+    imgs.forEach(function(im){{im.classList.toggle('on',+im.dataset.i===i)}});
+    yr.textContent=years[i]; rng.value=i;
+  }}
+  function stop(){{clearInterval(t); t=null; btn.textContent='Play';}}
+  btn.addEventListener('click',function(){{
+    if(t) return stop();
+    btn.textContent='Pause';
+    t=setInterval(function(){{
+      var i=(+rng.value+1)%years.length; set(i);
+      if(i===years.length-1){{setTimeout(stop,900);}}
+    }},900);
+  }});
+  rng.addEventListener('input',function(){{stop(); set(+rng.value)}});
+}});
+
+/* film scene lightbox */
+(function(){{
+  var lb=document.getElementById('lb'); if(!lb)return;
+  var img=lb.querySelector('img');
+  document.querySelectorAll('.scenes figure').forEach(function(f){{
+    f.addEventListener('click',function(){{
+      img.src=f.dataset.full; lb.classList.add('on');
+    }});
+  }});
+  lb.addEventListener('click',function(){{lb.classList.remove('on')}});
+  document.addEventListener('keydown',function(e){{
+    if(e.key==='Escape') lb.classList.remove('on');
+  }});
 }})();
 
 /* verdict timeline */
@@ -850,6 +978,12 @@ research = head(
           "2015&ndash;20 growth landed on cells that were already between 0.5% and 5% "
           "built, up from 60.2% in the 1990s. It is the one clean positive result in "
           "the project, and it uses no embeddings at all."),
+        p("Press play. Thirty-five years of building, on one fixed colour scale so the "
+          "growth is real rather than a rescaling artifact:"),
+        player("built", SERIES.get("built", []), "built-up area",
+               "Built-up fraction, 1990 to 2025. Watch the corridors thicken between "
+               "the cities rather than the city centres themselves getting brighter "
+               "&mdash; that is the fringe result, visible without a single statistic."),
         rule("The reframe worth the month: the instrument measures surface volatility, "
              "not development. That is a real thing to have built. It is simply not the "
              "thing we set out to build, and saying so is cheaper than defending it."),
@@ -983,10 +1117,11 @@ film = head(
           "intrusion. And <b>one time axis</b>: the entire video is a single element "
           "tree rendered as a pure function of time, so nothing mounts or unmounts at a "
           "scene boundary and editing one duration re-times everything downstream."),
-        plate("/assets/plates/film-poster.jpg",
-              "The two-tone system doing its work: the cost is warm, the machine is "
-              "cool, and the source is credited in the corner of every scene.",
-              "A frame from the film showing the cost of a humanoid robot's hands"),
+        filmplayer(),
+        p("Every scene, in order. Watch the two-tone rule hold across all of them "
+          "&mdash; cost, China and acceleration are always warm; the machine, America "
+          "and the conservative number are always cool:"),
+        scenes(),
         rule("The story was never the billion units. It was the flat decade &mdash; the "
              "ten years in the middle where nothing visible happens."),
     ]),

@@ -322,6 +322,40 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
   padding:.35rem .7rem;cursor:pointer;color:var(--ink-2)}
 .fillc__toggle button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 
+/* ---------- film: player + scene grid ---------- */
+.vid{margin:2.25rem 0 0;background:var(--plate);border:1px solid var(--rule-2)}
+.vid video{width:100%;display:block;background:var(--plate)}
+.vid figcaption{padding:.85rem 1rem;margin:0;color:var(--ink-3);
+  border-top:1px solid #23262c;background:var(--plate)}
+.scenes{margin:2.25rem 0 0;display:grid;gap:.5rem;
+  grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.scenes figure{margin:0;background:var(--plate);border:1px solid var(--rule-2);
+  overflow:hidden;cursor:zoom-in}
+.scenes img{width:100%;display:block;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+.scenes figure:hover img{transform:scale(1.03)}
+.scenes figcaption{font-family:var(--mono);font-size:.6875rem;color:var(--ink-3);
+  padding:.5rem .7rem;margin:0;border-top:1px solid #23262c;line-height:1.5}
+.lb{position:fixed;inset:0;background:rgba(7,9,12,.94);display:none;z-index:50;
+  align-items:center;justify-content:center;padding:2rem;cursor:zoom-out}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:100%;object-fit:contain}
+
+/* ---------- interactive: time player ---------- */
+.play{margin:2.25rem 0 0}
+.play__stage{position:relative;background:var(--plate);border:1px solid var(--rule-2);
+  aspect-ratio:16/10;overflow:hidden}
+.play__stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  opacity:0}
+.play__stage img.on{opacity:1}
+.play__yr{position:absolute;left:1rem;top:.85rem;font-family:var(--mono);
+  font-size:1.5rem;color:#f2f4f7;letter-spacing:.04em;
+  text-shadow:0 2px 14px rgba(7,9,12,.9)}
+.play__ctl{display:flex;align-items:center;gap:.9rem;margin-top:.9rem;flex-wrap:wrap}
+.play__btn{font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;
+  text-transform:uppercase;background:var(--ink);color:var(--paper);border:1px solid var(--ink);
+  border-radius:2px;padding:.4rem .85rem;cursor:pointer;min-width:5.5rem}
+.play__ctl input{flex:1;min-width:10rem;accent-color:var(--kill)}
+
 /* ---------- interactive: verdict timeline ---------- */
 .tl{margin:1.75rem 0 0}
 .tl svg{width:100%;height:auto;display:block;overflow:visible}
@@ -444,6 +478,44 @@ figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(-
     draw(b.dataset.f);
   })});
   draw('m');
+})();
+
+/* time player */
+[].slice.call(document.querySelectorAll('.play')).forEach(function(w){
+  var years=JSON.parse(w.dataset.years),
+      imgs=[].slice.call(w.querySelectorAll('img')),
+      yr=w.querySelector('.play__yr'),
+      btn=w.querySelector('.play__btn'),
+      rng=w.querySelector('input'), t=null;
+  function set(i){
+    imgs.forEach(function(im){im.classList.toggle('on',+im.dataset.i===i)});
+    yr.textContent=years[i]; rng.value=i;
+  }
+  function stop(){clearInterval(t); t=null; btn.textContent='Play';}
+  btn.addEventListener('click',function(){
+    if(t) return stop();
+    btn.textContent='Pause';
+    t=setInterval(function(){
+      var i=(+rng.value+1)%years.length; set(i);
+      if(i===years.length-1){setTimeout(stop,900);}
+    },900);
+  });
+  rng.addEventListener('input',function(){stop(); set(+rng.value)});
+});
+
+/* film scene lightbox */
+(function(){
+  var lb=document.getElementById('lb'); if(!lb)return;
+  var img=lb.querySelector('img');
+  document.querySelectorAll('.scenes figure').forEach(function(f){
+    f.addEventListener('click',function(){
+      img.src=f.dataset.full; lb.classList.add('on');
+    });
+  });
+  lb.addEventListener('click',function(){lb.classList.remove('on')});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') lb.classList.remove('on');
+  });
 })();
 
 /* verdict timeline */
