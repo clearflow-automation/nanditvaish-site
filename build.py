@@ -129,9 +129,12 @@ document.querySelectorAll('.note__form').forEach(function(f){
     var btn=f.querySelector('button'), hint=f.querySelector('.note__hint');
     var body=f.body.value.trim(); if(!body) return;
     btn.disabled=true; btn.textContent='Sending';
-    fetch('/api/note',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({page:document.title,body:body,from:f.from.value.trim()})})
+    fetch('https://formsubmit.co/ajax/da68bdf022916e7f4771c192cd673f08',{method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({_subject:'nanditvaish.com \u2014 note',
+        page:document.title,body:body,from:f.from.value.trim()})})
     .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){ if(j.success!=='true') throw new Error('rejected'); return j; })
     .then(function(){ f.innerHTML='<p class="note__state">Received. It came straight to Nandit \\u2014 nobody else sees it.</p>'; })
     .catch(function(){
       btn.disabled=false; btn.textContent='Send';
