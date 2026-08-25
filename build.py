@@ -257,7 +257,7 @@ __HEADP__
           <span class="sim__stat">Agents<b>2,000</b></span>
           <button class="sim__btn" id="sim-replay">Running</button>
         </div>
-        <p class="plate__cap"><b>One you can play with &mdash; the distribution of <span id="sim-unit">money</span>, live.</b>
+        <p class="plate__cap"><b>One you can play with: the distribution of <span id="sim-unit">money</span>, live.</b>
           Two thousand agents start with exactly one hundred each. Two are picked at random,
           their holdings pooled, the pool split at random. Nobody is smarter, nobody cheats,
           and the total never changes. It settles into the same curve that describes

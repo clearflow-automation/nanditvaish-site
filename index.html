@@ -30,10 +30,12 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
   font-size:clamp(1.0625rem,1rem + .25vw,1.1875rem);line-height:1.62;
   font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-weight:500;line-height:1.16;margin:0;letter-spacing:-.012em}
+h1,h2,h3{font-weight:500;line-height:1.16;margin:0;letter-spacing:-.012em;text-wrap:balance}
 p{margin:0}
 a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule-2)}
 a:hover{border-color:var(--ink)}
+::selection{background:var(--kill);color:var(--paper)}
+:focus-visible{outline:2px solid var(--kill);outline-offset:3px;border-radius:1px}
 
 .col{width:min(var(--measure),100% - 2.5rem);margin-inline:auto}
 .col-wide{width:min(var(--wide),100% - 2.5rem);margin-inline:auto}
@@ -48,6 +50,7 @@ a:hover{border-color:var(--ink)}
   letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
 .mast__nav a{border:0}
 .mast__nav a:hover{color:var(--ink);border-bottom:1px solid var(--ink)}
+.mast__nav a[aria-current="page"]{color:var(--ink);border-bottom:1px solid var(--ink)}
 
 /* ---------- abstract ---------- */
 .abstract{padding:5rem 0 3.5rem;border-bottom:1px solid var(--rule)}
@@ -258,7 +261,7 @@ figcaption b{font-weight:600;color:var(--ink)}
           <span class="sim__stat">Agents<b>2,000</b></span>
           <button class="sim__btn" id="sim-replay">Running</button>
         </div>
-        <p class="plate__cap"><b>One you can play with &mdash; the distribution of <span id="sim-unit">money</span>, live.</b>
+        <p class="plate__cap"><b>One you can play with: the distribution of <span id="sim-unit">money</span>, live.</b>
           Two thousand agents start with exactly one hundred each. Two are picked at random,
           their holdings pooled, the pool split at random. Nobody is smarter, nobody cheats,
           and the total never changes. It settles into the same curve that describes

@@ -11,6 +11,7 @@ Nothing is invented — every number traces to a file on the Desktop.
   python3 build-pages.py --prod    the head the live site ships
 """
 import html
+import re
 import json
 import pathlib
 import sys
@@ -64,6 +65,7 @@ th{text-align:left;font-size:.625rem;letter-spacing:.13em;text-transform:upperca
   border-bottom:1px solid var(--ink)}
 td{padding:.5rem .75rem .5rem 0;border-bottom:1px solid var(--rule)}
 td.neg{color:var(--kill)} td.pos{color:var(--live)}
+th.num,td.num{text-align:right}
 figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-height:1.6;
   color:var(--ink-2);margin-top:.9rem;max-width:44rem}
 
@@ -84,7 +86,7 @@ figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-he
 .yard__filter{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.5rem}
 .yard__filter button{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
   text-transform:uppercase;background:none;border:1px solid var(--rule-2);border-radius:2px;
-  padding:.3rem .6rem;cursor:pointer;color:var(--ink-2);font-weight:400}
+  padding:.35rem .7rem;cursor:pointer;color:var(--ink-2);font-weight:400}
 .yard__filter button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .th{padding:1.1rem 0;border-bottom:1px solid var(--rule);display:grid;gap:.35rem}
 .th__top{display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap}
@@ -216,19 +218,33 @@ def rule(t):         return f'<div class="rule"><span>The rule</span><p>{t}</p><
 def go(href, label): return f'<a class="go" href="{href}">{label} &rarr;</a>'
 
 
+def _numeric(cell):
+    txt = re.sub(r"<[^>]+>", "", str(cell))
+    txt = txt.replace("&minus;", "-").replace("&times;", "x").strip()
+    return bool(re.fullmatch(r"[+\-\u2212]?[\d.,%x\s]+", txt))
+
+
 def table(headers, rows, caption=""):
-    th = "".join(f"<th>{h}</th>" for h in headers)
+    # A column is numeric only if every body cell in it is; those columns right-align.
+    numcols = [all(_numeric(r[i]) for r in rows) for i in range(len(headers))]
+    th = ""
+    for i, h in enumerate(headers):
+        cls = ' class="num"' if numcols[i] else ''
+        th += f"<th{cls}>{h}</th>"
     tr = ""
     for r in rows:
         tds = ""
-        for c in r:
-            cls = ""
+        for i, c in enumerate(r):
+            cls = []
             s = str(c)
             if s.startswith("−") or (s.startswith("-") and any(ch.isdigit() for ch in s)):
-                cls = ' class="neg"'
+                cls.append("neg")
             elif s.startswith("+"):
-                cls = ' class="pos"'
-            tds += f"<td{cls}>{c}</td>"
+                cls.append("pos")
+            if numcols[i]:
+                cls.append("num")
+            a = f' class="{" ".join(cls)}"' if cls else ""
+            tds += f"<td{a}>{c}</td>"
         tr += f"<tr>{tds}</tr>"
     cap = f"<figcaption>{caption}</figcaption>" if caption else ""
     return (f'<figure class="t"><table><thead><tr>{th}</tr></thead>'
@@ -246,7 +262,7 @@ SERIES = json.loads(_sf.read_text()) if _sf.exists() else {}
 MAPS = [
     ("drift", "Change", "Cosine distance between each cell&rsquo;s fingerprint this year "
      "and last. Bright means the surface changed. This is the layer we built the whole "
-     "instrument to produce &mdash; and the one the referee later showed measures "
+     "instrument to produce, and the one the referee later showed measures "
      "volatility rather than development."),
     ("built", "Built-up", "Share of each cell that is built. Nobody drew these cities; "
      "they are the layer reading itself out. The road corridors between them are visible "
@@ -255,7 +271,7 @@ MAPS = [
      "cover was joined in specifically so a cluster could be given a real name instead "
      "of a number."),
     ("pop", "Population", "2020, which is where the free data stops. Reading this layer "
-     "correctly took two attempts &mdash; a negative window offset had Delhi at 263 "
+     "correctly took two attempts: a negative window offset had Delhi at 263 "
      "people per square kilometre instead of 23,452."),
     ("rain", "Rainfall", "Annual total. Rainfall <i>level</i> turned out not to move the "
      "land surface at all. Rainfall <i>volatility</i> does, at a rank correlation of "
@@ -281,19 +297,19 @@ def mapswitch():
 
 LADDER = [
     ("The empty street, wide", "The finished set with nobody in it. The camera sits well "
-     "back and takes in the whole block &mdash; magenta on the left, the diner sign on "
+     "back and takes in the whole block: magenta on the left, the diner sign on "
      "the right, everything already reflecting in the wet road."),
     ("Camera moved in", "The same street from a different position, with a warmer read "
      "on the signage. No new geometry, no new materials. Just a second opinion about "
      "where to stand."),
     ("A walker, crossing", "The first figure, moving across the frame at a distance. It "
-     "immediately changes what the street is for &mdash; the reflections now have "
+     "immediately changes what the street is for: the reflections now have "
      "something to be near."),
     ("Turned toward the lens", "Same camera, the walk redirected. The street stops being "
      "a backdrop and becomes somewhere a person is going."),
     ("Rain, and far too much of it", "The particle system goes in and flattens "
      "everything. The neon is washed out, the figure is a smudge, the road is gone. This "
-     "pass is kept because the overshoot is the useful part &mdash; you cannot tune a "
+     "pass is kept because the overshoot is the useful part: you cannot tune a "
      "thing you have not yet pushed past."),
     ("Rain, pulled back", "Density down, figure forward, the signage readable again. "
      "This is the frame the site opens on."),
@@ -308,7 +324,7 @@ def ladder():
     caps = json.dumps([[t, c] for t, c in LADDER])
     return (f'<div class="ladder" data-caps=\'{caps}\'>'
             f'<div class="ladder__stage">{imgs}</div>'
-            f'<div class="ladder__ctl"><span class="ladder__n" id="ladn">Pass 1 &mdash; '
+            f'<div class="ladder__ctl"><span class="ladder__n" id="ladn">Pass 1 &middot; '
             f'{LADDER[0][0]}</span>'
             f'<input type="range" min="0" max="{len(LADDER)-1}" value="0" step="1" '
             f'id="ladr" aria-label="Render pass"></div>'
@@ -321,13 +337,13 @@ SCENES = [
     ("f04", "The comparison the whole film keeps returning to"),
     ("f05", "Sensors are 37% of the bill of materials. The battery is 0.5%"),
     ("f06", "The hands alone: $9,315"),
-    ("f07", "Question card &mdash; none of this scales until it gets cheap"),
+    ("f07", "Question card: none of this scales until it gets cheap"),
     ("f08", "The timeline opens"), ("f09", "Ten years of almost nothing"),
     ("f10", "Six models unveiled in 2022. Fifty-one in 2024"),
     ("f11", "Price falls, capability lands, adoption goes vertical"),
     ("f12", "One becomes a hundred, a hundred becomes a million"),
     ("f13", "A billion in use by 2050"),
-    ("f14", "$5 trillion a year &mdash; twice the global auto industry"),
+    ("f14", "$5 trillion a year: twice the global auto industry"),
     ("f15", "The crowd, at scale"),
     ("f16", "930 million at work. 80 million in homes"),
     ("f17", "One household in ten, and the last place they arrive"),
@@ -339,7 +355,7 @@ def filmplayer():
     return ('<figure class="vid"><video controls preload="metadata" '
             'poster="/assets/plates/film-poster.jpg" '
             'src="/assets/film/humanoids-2050.mp4"></video>'
-            '<figcaption>Humanoids 2050 &mdash; three minutes, twenty-five scenes, '
+            '<figcaption>Humanoids 2050: three minutes, twenty-five scenes, '
             'narrated by Nandit. This is the compressed build; the master is 80 MB.'
             '</figcaption></figure>')
 
@@ -532,7 +548,7 @@ def shell(slug, title, desc, body, og=""):
       c=document.getElementById('ladc');
   function set(i){{
     imgs.forEach(function(im){{im.classList.toggle('on',+im.dataset.l===i)}});
-    n.innerHTML='Pass '+(i+1)+' &mdash; '+caps[i][0];
+    n.innerHTML='Pass '+(i+1)+' &middot; '+caps[i][0];
     c.innerHTML=caps[i][1];
   }}
   r.addEventListener('input',function(){{set(+r.value)}});
@@ -645,13 +661,12 @@ market = head(
     "Where four months of it ended up: the hub, on an ordinary Tuesday morning. Feed "
     "ages along the top, a choppiness reading with its percentile for each index, and a "
     "playbook line that turns all of that into one instruction. The table is headed in "
-    "Hinglish because the thing was built for one person rather than for a market "
-    "&mdash; <i>abhi kahan dekhna hai</i>, where to look right now.",
+    "Hinglish because the thing was built for one person rather than for a market: <i>abhi kahan dekhna hai</i>, where to look right now.",
     "The trading hub's Today tab during market hours") + "</div></section>") + "".join([
     entry("01", "18 April 2026", "A chart, on a screen", [
         p("It started as a Flask dashboard scanning NSE equities for CPR, Camarilla, "
           "relative strength, reversals and fractal coils. The organising idea was a "
-          "timeframe ladder &mdash; weekly reads yearly levels, daily reads monthly, "
+          "timeframe ladder: weekly reads yearly levels, daily reads monthly, "
           "four-hour reads weekly, and everything intraday reads the day."),
         p("The first data came from Yahoo Finance, and nine of those first 512 files "
           "were not Indian equities at all: crude, gold, copper, natural gas, palladium, "
@@ -663,7 +678,7 @@ market = head(
     ]),
     entry("02", "May 2026", "Building the ground truth", [
         p("Upstox OAuth, the Nifty 500 matched against the instrument master, and a "
-          "hive-partitioned parquet store &mdash; daily candles back to 2000, minute "
+          "hive-partitioned parquet store: daily candles back to 2000, minute "
           "candles from 2022."),
         p("The detail that mattered was in the cleaner. Session detection became "
           "coverage-based and <i>era-relative</i>: a date counts as a real trading day "
@@ -696,7 +711,7 @@ market = head(
     ]),
     entry("05", "17 June 2026", "The teardown", [
         p("Entry was booked at the level. But the signal only confirms once a bar "
-          "<i>closes</i> beyond that level &mdash; on daily data, about 1.95% beyond it. "
+          "<i>closes</i> beyond that level: on daily data, about 1.95% beyond it. "
           "You cannot fill at a price the bar has already left. The entire modelled edge "
           "was living inside that gap."),
         table(["Sleeve", "Modelled @ level", "Enter at close", "Retrace limit", "Verdict"],
@@ -705,31 +720,31 @@ market = head(
                ["cam_1H_short", "+0.50%", "−0.13%", "−0.04%", "DEAD"],
                ["cpr_1H_short", "+0.51%", "−0.14%", "−0.06%", "DEAD"]],
               "All four sleeves, gross, before costs. Only about 37% of trades ever "
-              "reach an exit that beats the confirming close &mdash; for the other 63% "
+              "reach an exit that beats the confirming close; for the other 63% "
               "the move is finished before you can act."),
         p("Flip between the two and watch every sleeve cross the line:"),
         fillchart(),
         pull("The signal is a lagging report that the move already happened."),
         p("Then we tried to rescue it. A stop order resting at the level fills on the "
-          "touch, in real time &mdash; but it drags in exactly the fakeouts the closing "
+          "touch, in real time, but it drags in exactly the fakeouts the closing "
           "confirmation had been screening out, roughly half of all touches, each losing "
           "between 0.6% and 2.7%. Three leading filters were pre-committed before "
-          "testing &mdash; volume on approach, ADX primed, higher-timeframe trend. None "
+          "testing: volume on approach, ADX primed, higher-timeframe trend. None "
           "of them clears cost. ADX made the daily book actively worse."),
         p("Four more biases fell out of the same audit. Survivorship inverted the trust "
           "ordering: the universe is the 2024 F&amp;O list projected backwards, so the "
           "long history is the <i>most</i> contaminated, and that famous &minus;4% in "
-          "2008 is the book largely sitting the year out &mdash; thirteen trades against "
+          "2008 is the book largely sitting the year out: thirteen trades against "
           "a normal fifty-four to sixty-nine. Capacity was fiction, arithmetic over tens "
           "of thousands of signals. Slippage was uncalibrated and charged nothing on "
-          "entry. And the structure itself &mdash; which family, how many sleeves, which "
-          "exits &mdash; had been chosen in-sample."),
+          "entry. And the structure itself (which family, how many sleeves, which "
+          "exits) had been chosen in-sample."),
         rule("Out of this came an audit lens: eight failure classes, ordered not by "
              "theory but by how often each one has actually killed an edge in this "
              "repository. Every later idea was run through it before it was believed."),
         p("One thing did survive the teardown, and not as a strategy. If the breakout "
           "side is dead because half of all touches fail, then the failures themselves "
-          "are a population worth watching. That became a tab &mdash; and the tab argues "
+          "are a population worth watching. That became a tab, and the tab argues "
           "with whoever opens it:"),
         plate("/assets/hub/failed_breaks.png",
               "Breaks classified <b>broke &rarr; failing &rarr; failed / reclaimed</b>, "
@@ -756,21 +771,20 @@ market = head(
         p("Buying short-dated premium intraday is negative carry. It loses on average, "
           "always. What had looked like a momentum fade was entirely expiry-day theta, "
           "and cutting by days-to-expiry proved it."),
-        rule("This programme was retired by decision rather than by statistics &mdash; "
-             "and the repository records which of the two it was. They are not the "
+        rule("This programme was retired by decision rather than by statistics, and the repository records which of the two it was. They are not the "
              "same thing and should not be filed together."),
     ]),
     entry("08", "July 2026", "The kill factory", [
         p("Instead of hand-coding hypotheses one at a time, we built engines whose "
           "purpose is to reject them."),
-        p("A <b>describer that cannot p-hack</b> &mdash; ten low-redundancy gauges per "
+        p("A <b>describer that cannot p-hack</b>: ten low-redundancy gauges per "
           "minute, z-scored using only the past, with outcomes measured from an entry "
-          "you could actually have got &mdash; feeding a <b>judge</b> that demands a "
+          "you could actually have got, feeding a <b>judge</b> that demands a "
           "chronological split, trains at or before 2025, tests on held-out 2026, nets "
           "off costs, and uses robust statistics rather than means."),
         p("Alongside it: a hundred pre-registered hypotheses, none testable without "
           "approval. A factor zoo of 462 factors that collapsed to roughly two "
-          "independent bets &mdash; size, and momentum, which turned out to be relative "
+          "independent bets: size, and momentum, which turned out to be relative "
           "strength wearing a different name at a correlation of +0.98. A reinforcement "
           "learner trained on real level geometry against an identical agent trained on "
           "placebo twins, where <i>the profitable placebo was the alarm</i>."),
@@ -785,7 +799,7 @@ market = head(
         p("We took the machine and pointed it at actual trading records. Two thousand "
           "two hundred and fifty-eight trades decomposed: skill lands at p = 0.45, and "
           "the profit is one name. Another book&rsquo;s stated rule is dead, while its "
-          "discretionary selection is real at p &asymp; 0.000 &mdash; the trader was "
+          "discretionary selection is real at p &asymp; 0.000: the trader was "
           "good at something other than the thing they believed they were doing. A "
           "+68.3% run over ten days turned out to have an entry that fails four "
           "different ways. A VCP playbook sign-flips on every lever when you move it "
@@ -795,7 +809,7 @@ market = head(
     ]),
     entry("10", "10 July 2026", "The steward crisis", [
         p("The integrity checker had gone fifteen days without an update and was "
-          "covering three of seven stores &mdash; because it <i>enumerated</i> what to "
+          "covering three of seven stores, because it <i>enumerated</i> what to "
           "check. Adding a store broke nothing; it simply went unchecked, forever. "
           "Meanwhile it was globbing one filename pattern while 499 symbols carried "
           "55,457 duplicate rows under a different one, and it reported clean. Three "
@@ -803,7 +817,7 @@ market = head(
           "hours old."),
         pull("A checker that names what it checks can only find bugs in what it names."),
         p("The fix was architectural rather than diligent. A registry file became the "
-          "declared desired state &mdash; every store, every service, every port. The "
+          "declared desired state: every store, every service, every port. The "
           "session manager discovers what is actually on disk and running, and fails if "
           "anything is not declared. Add a directory and preflight goes red until you "
           "declare it."),
@@ -820,13 +834,13 @@ market = head(
     entry("11", "July 2026", "The live book, and the placebo", [
         p("A positional momentum book on relative strength went to forward paper "
           "trading. Then we tested it against a thousand dart-throwing placebos."),
-        p("The selection is real &mdash; it beats random name-picking. But its Sharpe "
+        p("The selection is real: it beats random name-picking. But its Sharpe "
           "lands at roughly equal-weight buy-and-hold, which is a much less interesting "
           "claim. And the 48% compound headline splits into 85% across 2021&ndash;23 "
           "against 13.7% across 2024&ndash;26."),
         plate("/assets/hub/gati_paper.png",
               "The book as it runs. The fill assumptions are printed under the chart "
-              "where they can be argued with &mdash; next-open entry, full costs, ten "
+              "where they can be argued with: next-open entry, full costs, ten "
               "basis points of slippage, idle cash at six percent. The regime gate is "
               "off, so the watchlist is what the rules <i>would</i> buy and the position "
               "count is zero out of ten. The rupee figures are simulated capital.",
@@ -838,7 +852,7 @@ market = head(
         p("We swept the public internet across six lanes looking for mechanical systems "
           "and found the same thing everywhere: there is no undiscovered entry signal "
           "out there. What the literature genuinely offers is the risk layer."),
-        p("Ding&rsquo;s generalisation of Grinold gives the frame &mdash; information "
+        p("Ding&rsquo;s generalisation of Grinold gives the frame: information "
           "ratio is capped at IC divided by the volatility of IC, regardless of how much "
           "breadth you add. More bets cannot rescue an unstable signal."),
         table(["Pre-test", "Result", "Consequence"],
@@ -847,14 +861,14 @@ market = head(
                ["Effective number of bets", "10 names = 1.3 bets", "No sizing scheme can fix it"],
                ["Autocorrelation of own returns", "+0.126 <span style='color:#8b9098'>(universe: +0.004)</span>",
                 "Drawdown stops back on the table"]],
-              "The third result survived four adversarial controls &mdash; clean-mark "
+              "The third result survived four adversarial controls: clean-mark "
               "repricing, fully-invested days only, market residual with beta removed, "
               "and a fixed sixty-day hold. A placebo of ten random names showed +0.009. "
               "It overturns the textbook dismissal of stops for this particular book."),
     ]),
-    entry("13", "August 2026", "Kabaddi &mdash; turning the machine on the person", [
+    entry("13", "August 2026", "Kabaddi: turning the machine on the person", [
         p("The last thread pointed the instrument at its own operator. Four rounds of "
-          "interviews &mdash; one spoken, twenty-two minutes, transcribed rather than "
+          "interviews: one spoken, twenty-two minutes, transcribed rather than "
           "translated so the Hinglish trading vocabulary survived intact; three typed, "
           "verbatim. The goal was to write down the discretionary system that actually "
           "gets traded, as a specification."),
@@ -884,7 +898,7 @@ market = head(
                 "+9.2% &middot; −53.6%", "−0.6% &middot; −94.9% (p5: −99.7)"]],
               "At option-like leverage, without de-sizing, the median outcome is close to "
               "total ruin on a book that has positive expectancy. Of 9,955 signals only "
-              "3,619 were taken and 6,444 were skipped for want of a slot &mdash; and the "
+              "3,619 were taken and 6,444 were skipped for want of a slot. The "
               "account still loses. Capital was never the binding constraint. The edge was."),
         rule("Positive expectancy and survival are different properties. A book can have "
              "the first and still reliably destroy the account that trades it."),
@@ -893,8 +907,7 @@ market = head(
 <section class="bar"><div class="col-wide">
   <h2>The bar kept rising</h2>
   <p class="yard__intro">The most underrated thing in four months of work is not any
-  single result. It is that the standard an idea had to clear went up, visibly, month
-  after month &mdash; and several ideas that passed the early bar are dead at the
+  single result. It is that the standard an idea had to clear went up, visibly, month after month, and several ideas that passed the early bar are dead at the
   late one.</p>
   <ol>
     <li><b>Expectancy &ge; 0.10R, at least 300 trades</b><span>The opening checklist,
@@ -921,14 +934,13 @@ research = head(
     "A machine for finding the question",
     "Most research tooling helps you test a hypothesis. Almost none of it helps you "
     "find one worth testing. This is an attempt at the second thing, pointed at India "
-    "from orbit &mdash; and then pointed at itself.",
+    "from orbit, and then pointed at itself.",
     [("2.85 M", "rows &middot; 318,706 cells"), ("8", "layers on one join key"),
      ("4", "bugs caught before they became findings"), ("19 TB", "reduced to 242 MB")],
 ) + "".join([
     entry("01", "25 July 2026, 21:01", "Hour zero: one pixel, three formulas", [
         p("Before any data was pulled, one tile over Delhi was read and three "
-          "de-quantisation formulas were tested against it. The obvious one &mdash; "
-          "linear &mdash; produces vectors with a norm of about 2.5. The square law "
+          "de-quantisation formulas were tested against it. The obvious one, linear, produces vectors with a norm of about 2.5. The square law "
           "produces 1.0001, which is what a unit-sphere embedding is supposed to give."),
         rule("The discipline arrived before the data did. Had we scaled first and "
              "checked later, every number downstream would have been wrong and "
@@ -937,12 +949,11 @@ research = head(
     entry("02", "25 July 2026, 21:25", "The national pull", [
         p("Eleven thousand seven hundred and forty-nine tiles, nine years, fifty-one "
           "minutes. Read directly from cloud storage rather than downloaded, and sampled "
-          "from the overview pyramid rather than at full resolution &mdash; nineteen "
+          "from the overview pyramid rather than at full resolution: nineteen "
           "terabytes of source becomes 242 megabytes by choosing the right level."),
         rule("Resolution is a decision, not a constraint. Most of the cost of a large "
              "dataset is spent before anyone asks how much detail the question needs."),
-        p("Every layer below is drawn from the same 318,706 cells. Switch between them "
-          "&mdash; the country is the same, only the question changes:"),
+        p("Every layer below is drawn from the same 318,706 cells. Switch between them: the country is the same, only the question changes:"),
         mapswitch(),
         p("<i>The faint curved seams across the north are a known-open bug in the UTM "
           "zone joins. They are disclosed in the data dictionary and left visible here "
@@ -951,7 +962,7 @@ research = head(
     entry("03", "26 July 2026, 00:17", "A second domain, the same night", [
         p("Three hours after the first grid finished, we pointed the same method at "
           "something with nothing in common with satellites: NASA&rsquo;s battery "
-          "ageing corpus. Thirty-six gigabytes from public storage &mdash; not the "
+          "ageing corpus. Thirty-six gigabytes from public storage, not the "
           "convenient mirror, which silently drops the impedance cycles. A MATLAB "
           "struct-array became five normalised tables and 7.28 million rows, and the "
           "data dictionary was written before any analysis ran."),
@@ -963,21 +974,20 @@ research = head(
           "Two bugs came out of it, and both are the dangerous kind, because both "
           "produce numbers that look entirely reasonable."),
         p("A negative window offset shifted the whole population raster by 239 rows. "
-          "Delhi came back at 263 people per square kilometre instead of 23,452 &mdash; "
-          "wrong by two orders of magnitude, and still a number you could put in a table "
+          "Delhi came back at 263 people per square kilometre instead of 23,452, wrong by two orders of magnitude, and still a number you could put in a table "
           "without anyone blinking."),
         p("Summing counts over overlapping sample boxes gave India 1.75 billion people "
           "instead of 1.34 billion. Correct arithmetic on a wrong assumption: with "
           "overlapping windows you must take the mean, not the sum."),
         plate("/assets/maps/pop.jpg",
               "The population layer, read correctly. This is the plate that came back "
-              "with Delhi at 263 people per square kilometre the first time &mdash; and "
+              "with Delhi at 263 people per square kilometre the first time, and "
               "it looked fine. Nothing about a shifted raster announces itself; the "
               "coastline still traces, the Gangetic plain is still bright. Only the "
               "cross-check against the census caught it.",
               "India rendered by population density"),
         rule("The bugs that matter do not crash. They return a plausible number, and the "
-             "only defence is an external cross-check &mdash; total land area against "
+             "only defence is an external cross-check: total land area against "
              "the published figure, total population against the census."),
     ]),
     entry("05", "29 July 2026", "The dashboard, and its danger", [
@@ -986,26 +996,26 @@ research = head(
           "load-bearing. It looks like an answer."),
         plate("/assets/maps/cluster.jpg",
               "Twelve land types, clustered over the embedding. This is the view that "
-              "does the most damage &mdash; it is beautiful, it is obviously "
+              "does the most damage: it is beautiful, it is obviously "
               "<i>structured</i>, and structure is exactly what a person goes looking "
               "for. Six weeks later the referee showed that the layer underneath it "
               "cannot detect the thing we built it to detect.",
               "India rendered as twelve land-type clusters"),
         rule("A dashboard is a claim with the evidence removed. Everything on this one "
              "was true and none of it had been tested, and for a month nobody noticed "
-             "the difference &mdash; including us."),
+             "the difference, including us."),
         go("/work/india-grid/", "Open the explorer"),
     ]),
     entry("06", "21 August 2026, 01:18", "The referee night", [
         p("A month after the instrument was finished, we turned it on our own results. "
           "Three hypotheses, three kills, each one chained to the last."),
-        p("<b>Rainfall drives land-surface change.</b> Dead &mdash; a calendar artifact. "
+        p("<b>Rainfall drives land-surface change.</b> Dead: a calendar artifact. "
           "A national year effect swings mean drift by 2.3&times;, and the two dry years "
           "happen to be the two lowest-drift years."),
-        p("<b>Fine, but the swing itself is real.</b> Dead &mdash; the ordering is "
+        p("<b>Fine, but the swing itself is real.</b> Dead: the ordering is "
           "inverted. Water drifts 2.11&times; and desert 1.88&times; against cropland, "
           "while built-up land drifts 0.74&times;. Construction makes land <i>stiller</i>."),
-        p("<b>Fine, but it still detects real change.</b> Dead &mdash; matched against "
+        p("<b>Fine, but it still detects real change.</b> Dead: matched against "
           "an independent forest-loss dataset, the detector scores an AUC of 0.486. "
           "That is worse than a coin."),
         rule("Each kill was the referee check on the previous one. Three rounds of "
@@ -1033,8 +1043,7 @@ research = head(
           "growth is real rather than a rescaling artifact:"),
         player("built", SERIES.get("built", []), "built-up area",
                "Built-up fraction, 1990 to 2025. Watch the corridors thicken between "
-               "the cities rather than the city centres themselves getting brighter "
-               "&mdash; that is the fringe result, visible without a single statistic."),
+               "the cities rather than the city centres themselves getting brighter: that is the fringe result, visible without a single statistic."),
         rule("The reframe worth the month: the instrument measures surface volatility, "
              "not development. That is a real thing to have built. It is simply not the "
              "thing we set out to build, and saying so is cheaper than defending it."),
@@ -1068,14 +1077,14 @@ film = head(
 ) + "".join([
     entry("01", "31 July 2026", "The GUI era, and why it had to die", [
         p("Day one ran two things in parallel, and the tension between them turned out "
-          "to be the whole project. One was screen automation &mdash; taking over the "
+          "to be the whole project. One was screen automation: taking over the "
           "editor and clicking through it. The other was a scripting bridge over the "
           "engine&rsquo;s own remote-execution protocol, written the same morning."),
         p("The screen approach broke on its own terms within hours: it stops responding, "
           "the view does not move, the camera is unfathomable. But the fatal objection "
           "was not fragility."),
         pull("We are stuck with what the agent can do. We never really explore "
-             "what&rsquo;s possible &mdash; all options come out of that same number "
+             "what&rsquo;s possible, all options come out of that same number "
              "of combinations."),
         rule("Screen control is non-deterministic, and an options system depends on "
              "reproducibility. You cannot generate three comparable variants if the same "
@@ -1085,49 +1094,44 @@ film = head(
     entry("02", "5 August 2026", "The cyberpunk street, in one very long day", [
         p("Around forty scripts, in an order you can read straight off the filenames: "
           "build the street, fix the street, rebuild it curved, make it cyberpunk, "
-          "detail the buildings, a second detail pass, props, street furniture &mdash; "
-          "bins, newspaper stands, stop signs, zebra crossings, hydrants. Then neon "
+          "detail the buildings, a second detail pass, props, street furniture: bins, newspaper stands, stop signs, zebra crossings, hydrants. Then neon "
           "signage generated from scratch, then night, then blue hour, then sky, then "
           "three grading passes to land on &ldquo;just about sunset, street lights just "
           "coming on&rdquo;. Then rain textures, then a Niagara particle system. Then "
           "navigation, a walker, a camera move, and six render passes."),
         p("The geometry underneath all of it is six primitive shapes. No models, no "
           "asset packs. A whole noir street out of boxes, cylinders and light."),
-        p("The method that produced the detail has a name now, though it did not then "
-          "&mdash; comparison against reality, deliberately: <i>the wires are straight, "
+        p("The method that produced the detail has a name now, though it did not then: comparison against reality, deliberately: <i>the wires are straight, "
           "and in reality wires are tangled, they have smaller wires wrapped around "
           "them, they are never this straight, they sag in the middle.</i>"),
-        p("Drag through the six render passes. The set never changes across them "
-          "&mdash; what changes is where the camera stands, who is in the shot, and how "
+        p("Drag through the six render passes. The set never changes across them: what changes is where the camera stands, who is in the shot, and how "
           "hard it is raining:"),
         ladder(),
-        rule("The bottleneck was never the engine. It was review latency &mdash; "
-             "&ldquo;do I have to render it every time to see what&rsquo;s happening?&rdquo; "
+        rule("The bottleneck was never the engine. It was review latency: &ldquo;do I have to render it every time to see what&rsquo;s happening?&rdquo; "
              "Everything good that came later descends from that question."),
     ]),
     entry("03", "6 August 2026", "Don&rsquo;t jump the gun", [
         p("The morning after the street, the work stopped: no scene, nothing built, "
           "because none of the specifications existed yet. What came out of that was a "
           "twenty-thousand-word operating contract, and it is the single most valuable "
-          "artifact in the whole body of work &mdash; more than the street, more than "
+          "artifact in the whole body of work: more than the street, more than "
           "the film."),
         p("<b>The operator model.</b> It describes the human as &ldquo;merely a taste "
           "factor&rdquo;, and takes that literally: no editing skill, no engine "
           "knowledge. You can run a command, paste an error, record your voice, judge an "
           "image, and pick one of three. Every interaction is designed inside that "
-          "envelope. The corollary is the useful half &mdash; you can reliably detect "
+          "envelope. The corollary is the useful half: you can reliably detect "
           "that something is wrong but rarely say why, so producing the signal is your "
           "job and translating it into a rule is the machine&rsquo;s."),
         p("<b>The render ladder.</b> A one-minute contact sheet for a whole video is the "
           "primary review surface. Cheap regeneration is what makes &ldquo;none of "
           "these, do it again&rdquo; a rule you actually keep rather than one you "
           "abandon under time pressure."),
-        p("<b>The closed rejection menu.</b> Nine permitted complaints &mdash; too fast, "
+        p("<b>The closed rejection menu.</b> Nine permitted complaints: too fast, "
           "too busy, can&rsquo;t read it, doesn&rsquo;t sound like me, looks generic, I "
           "don&rsquo;t believe it, nothing happened, saw it coming, lost me at a "
           "timestamp. A closed vocabulary is what makes taste into data."),
-        p("<b>Audio is the master clock.</b> Voice first, all timing derived from it "
-          "&mdash; which converts pacing from an editing skill nobody has into a "
+        p("<b>Audio is the master clock.</b> Voice first, all timing derived from it, which converts pacing from an editing skill nobody has into a "
           "performance decision anyone can make at a microphone."),
         pull("The slop feeling does not come from using AI. It comes from automating "
              "judgement."),
@@ -1138,7 +1142,7 @@ film = head(
         p("The first episode takes a 2000 paper on kinetic exchange and builds it. Two "
           "thousand agents each start with exactly one hundred. Two are picked at "
           "random, their holdings pooled, the pool split at random. Nobody is smarter, "
-          "nobody cheats, and the total is conserved &mdash; asserted in the code, not "
+          "nobody cheats, and the total is conserved: asserted in the code, not "
           "assumed."),
         p("It converges to the Boltzmann&ndash;Gibbs distribution: the same law that "
           "describes how energy distributes among molecules in a gas. Inequality rises "
@@ -1163,23 +1167,21 @@ film = head(
         p("Three structural inventions hold it together. <b>Every chapter opens on a "
           "question card</b>, which doubles as a valid start point for a short-form cut. "
           "<b>A two-tone system</b> where warm is always cost, China, acceleration and "
-          "the uncomfortable side of any comparison, and cool is cheap, America and the "
-          "conservative number &mdash; the room itself is cool, so warm reads as "
+          "the uncomfortable side of any comparison, and cool is cheap, America and the conservative number; the room itself is cool, so warm reads as "
           "intrusion. And <b>one time axis</b>: the entire video is a single element "
           "tree rendered as a pure function of time, so nothing mounts or unmounts at a "
           "scene boundary and editing one duration re-times everything downstream."),
         filmplayer(),
-        p("Every scene, in order. Watch the two-tone rule hold across all of them "
-          "&mdash; cost, China and acceleration are always warm; the machine, America "
+        p("Every scene, in order. Watch the two-tone rule hold across all of them: cost, China and acceleration are always warm; the machine, America "
           "and the conservative number are always cool:"),
         scenes(),
-        rule("The story was never the billion units. It was the flat decade &mdash; the "
+        rule("The story was never the billion units. It was the flat decade: the "
              "ten years in the middle where nothing visible happens."),
     ]),
     entry("06", "August 2026", "The voice problem, which is not solved", [
         p("Several synthesis models were tried and rejected in the same words each time: "
           "shrill, mechanical, sounds like it came from a machine. A self-recorded take "
-          "was rejected too, and then the honest objection arrived &mdash; the delivery "
+          "was rejected too, and then the honest objection arrived: the delivery "
           "is monotonous, not the timbre."),
         p("The response was not a better model. It was measurement. A delivery plan "
           "fits every line to its scene window and records, per line: the hard limit, "
@@ -1196,8 +1198,7 @@ film = head(
         p("Several directories the contract refers to are still empty. Three documents "
           "it cites do not exist. The scene-kit module is a zero-byte file. The style "
           "decision is still open, which is precisely why the only renderer is named "
-          "<i>scratch</i>. And the Unreal craft work and the channel system have never "
-          "actually met &mdash; the first episode is drawn with a plotting library, not "
+          "<i>scratch</i>. And the Unreal craft work and the channel system have never actually met: the first episode is drawn with a plotting library, not "
           "the engine."),
         rule("A recap that hides this is a brochure. One that shows it is a research "
              "log, and it is far more convincing."),
