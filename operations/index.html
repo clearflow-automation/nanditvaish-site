@@ -73,6 +73,12 @@ figcaption b{font-weight:600;color:var(--ink)}
 
 /* ---------- simulation canvas ---------- */
 .sim{display:grid;gap:1.25rem}
+.sim__head{max-width:58ch}
+.sim__head h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.375rem,1.2rem + .8vw,1.75rem);
+  line-height:1.2;letter-spacing:-.02em;color:#e9edf2;margin:0 0 .6rem}
+.sim__head p{font-family:var(--serif);font-size:1.0313rem;line-height:1.6;color:#b9c0c9;margin:0}
+.sim a{color:#e9edf2;border-bottom:1px solid #3a3f47}
+.sim a:hover{border-color:#e9edf2}
 .sim__canvas{width:100%;aspect-ratio:16/7;background:#0a0b0d;display:block;
   border:1px solid #23262c}
 .sim__bar{display:flex;flex-wrap:wrap;gap:1.5rem 2.25rem;align-items:baseline;

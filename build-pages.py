@@ -813,7 +813,9 @@ market = head(
     "Sixty ideas, run until they broke",
     "Four months of market research on 252 million rows of Indian equity and "
     "index-option history. It set out to find a signal and ended up building an "
-    "instrument that can prove, cheaply and repeatedly, that a signal is not there.",
+    "instrument that can prove, cheaply and repeatedly, that a signal is not there. "
+    "What cleared the bar instead is not a prediction: discretionary selection, and "
+    "the management of the trade after the fill.",
     [("252 M", "rows &middot; 188k parquet parts"), ("60", "threads run to a verdict"),
      ("41", "dead"), ("242,764", "lines of Python")],
 ) + ('<section class="ent"><div class="col-wide">' + plate(
@@ -1146,6 +1148,28 @@ market = head(
     <li><b>t &gt; 3, for multiple testing</b><span>The Harvey&ndash;Liu&ndash;Zhu bar,
       because by now we had run hundreds of tests.</span></li>
   </ol>
+</div></section>
+<section class="bar"><div class="col-wide">
+  <h2>What cleared the bar</h2>
+  <p class="yard__intro">The signal layer proved nothing. Across sixty threads, a
+  hundred pre-registered hypotheses and 104 pre-registered kabaddi cells, not one
+  entry pattern carried strength that survived the list above: not levels, not
+  machine-learned policies, not fitted geometry, not folklore. That result is the
+  product, not the casualty. The instrument exists so this sentence could be said
+  with evidence rather than exhaustion.</p>
+  <p class="pull">Where to enter never cleared the bar. How much to carry, and
+  when to cut, did.</p>
+  <p class="yard__intro">Two things survived, and both were measured rather than
+  believed. Discretionary selection is real: a trader&rsquo;s stated rule died
+  under the machine while the selection underneath it tested at
+  p&nbsp;&asymp;&nbsp;0.000 (entry 09), and the kabaddi book, written down as a
+  specification, carries positive expectancy (entry 14). And trade management is
+  where outcomes are actually decided: the identical book at option-like leverage
+  lands at +9.2% a year with de-sizing against a median of &minus;94.9% without it
+  (entry 14), and the single result the literature sweep left standing was a
+  drawdown stop, not an entry (entry 13). The returns are not the claim. The
+  asymmetry is: every attempt to time an entry died, and what survived is
+  selection, sizing, and the exit.</p>
 </div></section>
 """
 

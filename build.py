@@ -32,11 +32,21 @@ SIM_JS = """
    interpolated — every frame is the true state of the model. */
 (function(){
   var cv=document.getElementById('sim'); if(!cv) return;
-  var ctx=cv.getContext('2d'), N=2000, START=100, BINS=54;
-  var m=new Float64Array(N), seed=20260825, frame=0, MAXF=620, tx=0, raf=null;
+  var ctx=cv.getContext('2d'), N=2000, START=100, BINS=54, XMAX=600;
+  var m=new Float64Array(N), seed=20260825, frame=0, MAXF=620, tx=0, raf=null, ran=false;
   var $g=document.getElementById('sim-gini'), $t=document.getElementById('sim-tx'),
       $b=document.getElementById('sim-replay'), $l=document.getElementById('sim-label');
   var ENERGY=false;
+
+  /* Equilibrium occupancy per bin: Boltzmann-Gibbs with mean START, drawn as a
+     fixed dashed target so the histogram can be seen walking into it. The x-axis
+     is fixed at [0, XMAX] for the same reason: a domain that rescales each frame
+     turns convergence into wobble. */
+  var EXP=new Array(BINS), bw=XMAX/BINS, expMax=0;
+  for(var q=0;q<BINS;q++){
+    EXP[q]=N*(Math.exp(-(q*bw)/START)-Math.exp(-((q+1)*bw)/START));
+    if(EXP[q]>expMax) expMax=EXP[q];
+  }
 
   function rnd(){ seed^=seed<<13; seed^=seed>>>17; seed^=seed<<5; return ((seed>>>0)%1e6)/1e6; }
   function reset(){ for(var i=0;i<N;i++) m[i]=START; frame=0; tx=0; }
@@ -56,19 +66,40 @@ SIM_JS = """
   }
 
   function draw(){
-    var r=size(), W=r.width, H=r.height, pad=1;
+    var r=size(), W=r.width, H=r.height, pad=1, AX=20, PH=H-AX;
     ctx.clearRect(0,0,W,H);
-    var max=0; for(var i=0;i<N;i++) if(m[i]>max) max=m[i];
-    var top=Math.max(max,1), hist=new Array(BINS).fill(0);
-    for(i=0;i<N;i++){ var b=Math.min(BINS-1,Math.floor(m[i]/top*BINS)); hist[b]++; }
-    var hmax=1; for(i=0;i<BINS;i++) if(hist[i]>hmax) hmax=hist[i];
-    var bw=(W-pad*(BINS-1))/BINS;
+    var hist=new Array(BINS).fill(0);
+    for(var i=0;i<N;i++){ var b=Math.min(BINS-1,Math.floor(m[i]/XMAX*BINS)); hist[b]++; }
+    var hmax=expMax; for(i=0;i<BINS;i++) if(hist[i]>hmax) hmax=hist[i];
+    var bwpx=(W-pad*(BINS-1))/BINS;
+    ctx.fillStyle = ENERGY ? 'rgba(242,180,92,.85)' : 'rgba(79,214,200,.85)';
     for(i=0;i<BINS;i++){
-      var h=(hist[i]/hmax)*(H-2);
-      ctx.fillStyle = ENERGY ? 'rgba(242,180,92,'+(0.35+0.65*(hist[i]/hmax))+')'
-                             : 'rgba(79,214,200,'+(0.35+0.65*(hist[i]/hmax))+')';
-      ctx.fillRect(i*(bw+pad), H-h, bw, h);
+      var h=(hist[i]/hmax)*(PH-14);
+      ctx.fillRect(i*(bwpx+pad), PH-h, bwpx, h);
     }
+    /* everyone starts here */
+    var sx=(START/XMAX)*W;
+    ctx.strokeStyle='rgba(139,144,152,.35)'; ctx.lineWidth=1;
+    ctx.setLineDash([2,4]); ctx.beginPath(); ctx.moveTo(sx,6); ctx.lineTo(sx,PH); ctx.stroke();
+    /* the prediction */
+    ctx.strokeStyle='#8b9098'; ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    for(i=0;i<BINS;i++){
+      var x=i*(bwpx+pad)+bwpx/2, y=PH-(EXP[i]/hmax)*(PH-14);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#8b9098'; ctx.font='10px "IBM Plex Mono",monospace';
+    ctx.textAlign='right';
+    ctx.fillText('Boltzmann\\u2013Gibbs, the prediction', W-6, PH-16);
+    /* axis */
+    ctx.strokeStyle='#23262c'; ctx.beginPath();
+    ctx.moveTo(0,PH+.5); ctx.lineTo(W,PH+.5); ctx.stroke();
+    ctx.textAlign='left'; ctx.fillText('0', 2, H-6);
+    ctx.textAlign='center';
+    ctx.fillText('100 \\u00b7 start', sx, H-6);
+    ctx.fillText('300', (300/XMAX)*W, H-6);
+    ctx.textAlign='right'; ctx.fillText('600', W-2, H-6);
   }
 
   function step(){
@@ -87,16 +118,25 @@ SIM_JS = """
     else { raf=null; $b.textContent='Run it again'; }
   }
 
-  function run(){ if(raf) cancelAnimationFrame(raf); seed=20260825; reset(); $b.textContent='Running'; step(); }
+  function run(){ if(raf) cancelAnimationFrame(raf); seed=20260825; reset(); ran=true; $b.textContent='Running'; step(); }
   $b.addEventListener('click',run);
-  $l.addEventListener('click',function(){
+  $l.addEventListener('click',function(ev){
+    ev.preventDefault();
     ENERGY=!ENERGY;
     $l.textContent = ENERGY ? 'energy among gas molecules' : 'money among people';
-    document.getElementById('sim-unit').textContent = ENERGY ? 'energy' : 'money';
     draw();
   });
   window.addEventListener('resize',function(){ draw(); });
-  reset(); draw(); run();
+  reset(); draw();
+  /* Start only when the viewer arrives, from the visible all-equal spike, so the
+     collapse is witnessed rather than already over. Honour reduced motion. */
+  var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!still && 'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(e){ if(e.isIntersecting&&!ran){ run(); io.disconnect(); } });
+    },{threshold:.35});
+    io.observe(cv);
+  }
 })();
 """
 
@@ -259,19 +299,27 @@ __HEADP__
   <section class="plate rv">
     <div class="plate__in">
       <div class="sim">
-        <canvas id="sim" class="sim__canvas" aria-label="Live simulation of the distribution of money across 2,000 agents"></canvas>
+        <div class="sim__head">
+          <h2>Money behaves like a gas</h2>
+          <p>Two thousand agents start equal, one hundred each: the tall spike on the
+          chart. Then they trade at random. Two picked, holdings pooled, the pool
+          split by a coin toss. The dashed line is what statistical physics predicts
+          will happen to them, and the bars find it on their own.</p>
+        </div>
+        <canvas id="sim" class="sim__canvas" aria-label="Simulation: 2,000 agents trading at random, the money histogram collapsing onto the Boltzmann-Gibbs curve"></canvas>
         <div class="sim__bar">
           <span class="sim__stat">Gini<b id="sim-gini">0.000</b></span>
           <span class="sim__stat">Exchanges<b id="sim-tx">0</b></span>
           <span class="sim__stat">Agents<b>2,000</b></span>
-          <button class="sim__btn" id="sim-replay">Running</button>
+          <button class="sim__btn" id="sim-replay">Run</button>
         </div>
-        <p class="plate__cap"><b>One you can play with: the distribution of <span id="sim-unit">money</span>, live.</b>
-          Two thousand agents start with exactly one hundred each. Two are picked at random,
-          their holdings pooled, the pool split at random. Nobody is smarter, nobody cheats,
-          and the total never changes. It settles into the same curve that describes
-          <a href="#" id="sim-label" style="border-color:#3a3f47">money among people</a>.
-          Inequality out of nothing but fair trades. From Episode 1 of the channel.</p>
+        <p class="plate__cap"><b>Nobody is smarter, nobody cheats, the total never
+          changes. Inequality arrives anyway.</b> The settled shape is the
+          Boltzmann&ndash;Gibbs distribution, the same law that governs
+          <a href="#" id="sim-label">money among people</a>. This is the model behind
+          the film notebook&rsquo;s first episode; where the physics stops fitting the
+          rich is that episode&rsquo;s actual subject.
+          <a href="/film/">The film notebook</a></p>
       </div>
     </div>
   </section>
