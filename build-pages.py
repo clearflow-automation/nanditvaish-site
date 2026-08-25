@@ -1018,7 +1018,23 @@ market = head(
               "The hub's System tab showing a failed end-of-day refresh"),
         go("/market/hub/", "All ten tabs"),
     ]),
-    entry("11", "July 2026", "The live book, and the placebo", [
+    entry("11", "standing since 8 July 2026", "The second brain", [
+        p("The research corpus is hundreds of documents, and the reason it stays "
+          "usable is a rule, not a tool: an Obsidian vault sits over the whole "
+          "repository, and a standing instruction requires every new diagnostic, "
+          "spec or finding to join the graph <i>connected</i>, never as an orphan "
+          "node. One hundred and fifty-eight notes, one hundred and ninety links "
+          "between them."),
+        plate("/assets/ops/brain.png",
+              "The vault, drawn from its own wikilinks: one continent and two "
+              "satellites. The named hubs are the same objects as the graveyard "
+              "above (CPR-Camarilla, Nifty-Scalp, RS-Rotation) because the verdict "
+              "pages and the knowledge graph are one system, not two.",
+              "Force-directed graph of the research vault's notes and links"),
+        rule("A finding you cannot find again will be paid for twice. The graph is "
+             "cheaper than the second discovery."),
+    ]),
+    entry("12", "July 2026", "The live book, and the placebo", [
         p("A positional momentum book on relative strength went to forward paper "
           "trading. Then we tested it against a thousand dart-throwing placebos."),
         p("The selection is real: it beats random name-picking. But its Sharpe "
@@ -1044,7 +1060,7 @@ market = head(
         rule("Quote the regime numbers, never the headline. A single figure spanning "
              "two regimes is an average of two different businesses."),
     ]),
-    entry("12", "August 2026", "The sweep, and what the literature actually offers", [
+    entry("13", "August 2026", "The sweep, and what the literature actually offers", [
         p("We swept the public internet across six lanes looking for mechanical systems "
           "and found the same thing everywhere: there is no undiscovered entry signal "
           "out there. What the literature genuinely offers is the risk layer."),
@@ -1062,7 +1078,7 @@ market = head(
               "and a fixed sixty-day hold. A placebo of ten random names showed +0.009. "
               "It overturns the textbook dismissal of stops for this particular book."),
     ]),
-    entry("13", "August 2026", "Kabaddi: turning the machine on the person", [
+    entry("14", "August 2026", "Kabaddi: turning the machine on the person", [
         p("The last thread pointed the instrument at its own operator. Four rounds of "
           "interviews: one spoken, twenty-two minutes, transcribed rather than "
           "translated so the Hinglish trading vocabulary survived intact; three typed, "
@@ -1389,6 +1405,7 @@ film = head(
           "shrill, mechanical, sounds like it came from a machine. A self-recorded take "
           "was rejected too, and then the honest objection arrived: the delivery "
           "is monotonous, not the timbre."),
+table(["#", "Line, as shaped", "Window", "Measured", "wpm", "Fits"], [['01', 'Two hundred thousand dollars.', '3.2s', '3.16s', '76', '&#10003;'], ['06', 'It is shaped like us because the world is al&hellip;', '3.8s', '3.68s', '228', '&#10003;'], ['12', 'None of this scales until it gets cheap. So &hellip;', '5.0s', '4.93s', '134', '&#10003;'], ['18', 'Then in the late 2030s the line stops behavi&hellip;', '4.2s', '4.17s', '173', '&#10003;'], ['24', 'Five trillion dollars a year in revenue.', '3.6s', '0.70s', '600', '&#10003;'], ['30', 'China, mostly. Three hundred and two million&hellip;', '8.0s', '8.00s', '142', '&#10003;'], ['35', "Morgan Stanley's billion is … the conservati&hellip;", '3.4s', '0.81s', '519', '&#10003;']], "Seven of the thirty-five lines. Every line carries its hard limit, its measured read, the words-per-minute that implies, and a fits flag; after shaping, all thirty-five fit, at paces from 76 to 600 words a minute. Pacing became arithmetic, not feel."),
         p("The response was not a better model. It was measurement. A delivery plan "
           "fits every line to its scene window and records, per line: the hard limit, "
           "the designed duration, the word count, the measured duration, the resulting "
