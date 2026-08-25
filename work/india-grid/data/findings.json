@@ -1,0 +1,595 @@
+{
+ "note_prices": "Land prices exist in no EO catalog; VIIRS nightlights paywalled Jun 2026. All land-value links below are PROXIES via construction or population.",
+ "n_cells": 121233,
+ "questions": [
+  {
+   "id": "reservoir",
+   "tag": "whole-cell flip",
+   "title": "Can drift see a whole-cell flip, when it was blind to a 1% one?",
+   "why": "Forest loss failed at 0.25 km\u00b2 out of 25. A reservoir drawing down or refilling flips up to the entire 25 km\u00b2 cell. If drift is a real change detector with a resolution floor, this is where it should finally fire.",
+   "expected": "Reservoir cells should couple to rainfall swings far more strongly than matched cropland \u2014 we predicted a clear separation, AUC well above 0.60.",
+   "method": "862 inland water cells (WorldCover >50% water) paired with cropland cells in the same state. Per cell, Spearman across 2018\u201324 between corrected drift and |year-on-year rain-anomaly swing|. Three independent sources: water mask = WorldCover, driver = CHIRPS, signal = AlphaEarth.",
+   "n": 862,
+   "result": {
+    "coupling_water": 0.3214285714285715,
+    "coupling_land": 0.3571428571428572,
+    "coupling_water_mean": 0.2542260523699039,
+    "coupling_land_mean": 0.26856148491879356,
+    "null_water": 0.0,
+    "null_land": 0.0,
+    "auc": 0.4926370443742228,
+    "years": [
+     2018,
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "driftz_water": [
+     -0.029384132474660873,
+     -0.12237246334552765,
+     -0.09222155809402466,
+     -0.1423570066690445,
+     -0.1683405488729477,
+     -0.04734149947762489,
+     -0.20805063843727112,
+     -0.1285281777381897
+    ],
+    "driftz_land": [
+     -0.009741504676640034,
+     -0.01567637175321579,
+     -0.02115793712437153,
+     -0.001116231083869934,
+     -0.013456068933010101,
+     0.00446631945669651,
+     -0.008190060965716839,
+     -0.00962449423968792
+    ],
+    "rain_years": [
+     2017,
+     2018,
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024
+    ],
+    "rain_anom_national": [
+     -0.03396701440215111,
+     -0.10866879671812057,
+     0.043832819908857346,
+     0.07258740812540054,
+     0.0263608880341053,
+     0.05257496237754822,
+     -0.1061847060918808,
+     0.05346441641449928
+    ]
+   },
+   "verdict": "PARTIAL",
+   "verdict_class": "part",
+   "got": "<b>No separation at all \u2014 AUC 0.493.</b> Reservoir cells couple to rainfall swings at \u03c1 +0.321; matched cropland at \u03c1 +0.357. The farmland is if anything <em>more</em> rain-coupled than the water. A whole-cell flip does not rescue drift.<br><br>But the test found something we were not looking for: both groups sit far above a shuffled-year null of +0.000. <b>Drift genuinely does track year-on-year rainfall volatility</b> \u2014 everywhere, not just on water. That is a real positive, and it is the first one."
+  },
+  {
+   "id": "building",
+   "tag": "land-value proxy \u00b7 construction",
+   "title": "Does the ground visibly change where buildings go up?",
+   "why": "An early signal of development is exactly what a land-value model wants \u2014 land prices are in no satellite catalog, so construction is the closest open proxy.",
+   "expected": "Construction is permanent and high-contrast, so we predicted drift should detect it far better than it detected forest loss \u2014 AUC around 0.65\u20130.75.",
+   "method": "GHS-BUILT-S growth as the event, cells paired on state and 2015 built-up level. Tested concurrently and as a true lead, against a trivial baseline that just extrapolates past growth. NOTE: the 2025 GHSL epoch is MODELLED, not observed.",
+   "n": 120377,
+   "result": {
+    "tests": [
+     {
+      "event": "observed 2015\u21922020",
+      "threshold_pp": 0.5,
+      "predictor": "corrected drift 2018\u201320",
+      "timing": "concurrent",
+      "n": 10670,
+      "auc": 0.4008973911913071,
+      "ci95": [
+       0.3950000344755198,
+       0.4074018640057128
+      ]
+     },
+     {
+      "event": "observed 2015\u21922020",
+      "threshold_pp": 0.5,
+      "predictor": "novelty 2019\u201320",
+      "timing": "concurrent",
+      "n": 10670,
+      "auc": 0.44854738166113156,
+      "ci95": [
+       0.44209803937499614,
+       0.455759275671526
+      ]
+     },
+     {
+      "event": "modelled 2020\u21922025",
+      "threshold_pp": 0.5,
+      "predictor": "corrected drift 2018\u201320",
+      "timing": "true lead",
+      "n": 3019,
+      "auc": 0.37059570056529473,
+      "ci95": [
+       0.36065305620437904,
+       0.38329409763339417
+      ]
+     },
+     {
+      "event": "observed 2015\u21922020",
+      "threshold_pp": 0.5,
+      "predictor": "built-up growth 2010\u201315",
+      "timing": "baseline",
+      "n": 10670,
+      "auc": 0.9773937121922127,
+      "ci95": [
+       0.9758273924912757,
+       0.9787013199073509
+      ]
+     }
+    ],
+    "event_size_km2": 0.125,
+    "forest_reference_auc": 0.486
+   },
+   "verdict": "KILLED",
+   "verdict_class": "dead",
+   "got": "<b>Drift does not merely fail \u2014 it runs backwards.</b> AUC 0.449, 95% CI [0.442, 0.456], excluding 0.50. Cells that gained buildings drift <em>less</em> than cells that did not: construction converts a churning farm surface into a static one, exactly as the noise-floor ordering predicted.<br><br>And the trivial baseline that uses no satellite data at all \u2014 <em>where it grew in 2010\u201315, it grows again</em> \u2014 scores <b>0.977</b>. <b>The embedding adds nothing over knowing the past.</b>"
+  },
+  {
+   "id": "sprawl",
+   "tag": "land-value proxy \u00b7 where growth lands",
+   "title": "Is India's built-up growth sprawl or infill \u2014 and where are the people?",
+   "why": "Infill and sprawl push land value in opposite geographies: infill lifts the core, sprawl lifts the fringe. This question uses NO drift, so nothing the referee killed can touch it.",
+   "expected": "We expected the classic developing-country pattern: growth dominated by expansion into rural cells, with infill a minor share.",
+   "method": "GHS-BUILT-S 1990\u21922020, observed epochs only. Each epoch's built-up GAIN is attributed to the stratum the cell started in: core, fringe, or rural. Then per state, infill share against WorldPop density.",
+   "n": 121233,
+   "result": {
+    "steps": [
+     {
+      "from": 1990,
+      "to": 2000,
+      "total_gain": 203.56886291503906,
+      "strata": [
+       {
+        "stratum": "core (>5% built)",
+        "share": 0.16722789406776428,
+        "n": 1010
+       },
+       {
+        "stratum": "fringe (0.5\u20135%)",
+        "share": 0.6016985774040222,
+        "n": 33290
+       },
+       {
+        "stratum": "rural (<0.5%)",
+        "share": 0.2310735434293747,
+        "n": 77364
+       }
+      ]
+     },
+     {
+      "from": 2000,
+      "to": 2010,
+      "total_gain": 224.82310485839844,
+      "strata": [
+       {
+        "stratum": "core (>5% built)",
+        "share": 0.15421687066555023,
+        "n": 1644
+       },
+       {
+        "stratum": "fringe (0.5\u20135%)",
+        "share": 0.6207749843597412,
+        "n": 42922
+       },
+       {
+        "stratum": "rural (<0.5%)",
+        "share": 0.22500820457935333,
+        "n": 70061
+       }
+      ]
+     },
+     {
+      "from": 2010,
+      "to": 2015,
+      "total_gain": 161.10305786132812,
+      "strata": [
+       {
+        "stratum": "core (>5% built)",
+        "share": 0.16149921715259552,
+        "n": 2358
+       },
+       {
+        "stratum": "fringe (0.5\u20135%)",
+        "share": 0.6600360870361328,
+        "n": 53402
+       },
+       {
+        "stratum": "rural (<0.5%)",
+        "share": 0.17846480011940002,
+        "n": 58919
+       }
+      ]
+     },
+     {
+      "from": 2015,
+      "to": 2020,
+      "total_gain": 224.43402099609375,
+      "strata": [
+       {
+        "stratum": "core (>5% built)",
+        "share": 0.07707840204238892,
+        "n": 2834
+       },
+       {
+        "stratum": "fringe (0.5\u20135%)",
+        "share": 0.7458494901657104,
+        "n": 60366
+       },
+       {
+        "stratum": "rural (<0.5%)",
+        "share": 0.17707206308841705,
+        "n": 51506
+       }
+      ]
+     }
+    ],
+    "states": [
+     {
+      "state": "Manipur",
+      "infill_share": 0.32246389985084534,
+      "pop_density": 41.89665222167969,
+      "n": 847,
+      "growth_x": 1.368977665901184
+     },
+     {
+      "state": "Nagaland",
+      "infill_share": 0.2043382078409195,
+      "pop_density": 65.00386047363281,
+      "n": 639,
+      "growth_x": 1.5604931116104126
+     },
+     {
+      "state": "Kerala",
+      "infill_share": 0.1938711255788803,
+      "pop_density": 592.6851806640625,
+      "n": 1435,
+      "growth_x": 2.0556554794311523
+     },
+     {
+      "state": "Punjab",
+      "infill_share": 0.15265175700187683,
+      "pop_density": 440.2976379394531,
+      "n": 1910,
+      "growth_x": 1.8928306102752686
+     },
+     {
+      "state": "Haryana",
+      "infill_share": 0.1303345412015915,
+      "pop_density": 458.14447021484375,
+      "n": 1680,
+      "growth_x": 2.279232978820801
+     },
+     {
+      "state": "Telangana",
+      "infill_share": 0.12342029064893723,
+      "pop_density": 215.19224548339844,
+      "n": 4456,
+      "growth_x": 2.5801262855529785
+     },
+     {
+      "state": "WestBengal",
+      "infill_share": 0.12009871751070023,
+      "pop_density": 820.0170288085938,
+      "n": 3243,
+      "growth_x": 1.8048596382141113
+     },
+     {
+      "state": "Gujarat",
+      "infill_share": 0.0899483785033226,
+      "pop_density": 190.6226806640625,
+      "n": 7146,
+      "growth_x": 2.5992891788482666
+     },
+     {
+      "state": "TamilNadu",
+      "infill_share": 0.08946909755468369,
+      "pop_density": 398.5963439941406,
+      "n": 5085,
+      "growth_x": 2.4437215328216553
+     },
+     {
+      "state": "Maharashtra",
+      "infill_share": 0.08798263221979141,
+      "pop_density": 221.3089599609375,
+      "n": 11778,
+      "growth_x": 2.592188835144043
+     },
+     {
+      "state": "Karnataka",
+      "infill_share": 0.08504374325275421,
+      "pop_density": 211.8400421142578,
+      "n": 7310,
+      "growth_x": 2.5217020511627197
+     },
+     {
+      "state": "Uttarakhand",
+      "infill_share": 0.08367621898651123,
+      "pop_density": 102.44113159179688,
+      "n": 2093,
+      "growth_x": 2.781454563140869
+     },
+     {
+      "state": "Jharkhand",
+      "infill_share": 0.07927661389112473,
+      "pop_density": 338.6768798828125,
+      "n": 3087,
+      "growth_x": 2.0902209281921387
+     },
+     {
+      "state": "Tripura",
+      "infill_share": 0.07199756801128387,
+      "pop_density": 272.1662902832031,
+      "n": 406,
+      "growth_x": 2.690591335296631
+     },
+     {
+      "state": "Assam",
+      "infill_share": 0.07088156789541245,
+      "pop_density": 358.4871826171875,
+      "n": 3013,
+      "growth_x": 1.4988787174224854
+     },
+     {
+      "state": "UttarPradesh",
+      "infill_share": 0.07029426097869873,
+      "pop_density": 817.5247192382812,
+      "n": 9275,
+      "growth_x": 2.5563459396362305
+     },
+     {
+      "state": "Chhattisgarh",
+      "infill_share": 0.06581532210111618,
+      "pop_density": 142.5631103515625,
+      "n": 5198,
+      "growth_x": 2.129406690597534
+     },
+     {
+      "state": "AndhraPradesh",
+      "infill_share": 0.06353159993886948,
+      "pop_density": 191.12545776367188,
+      "n": 6159,
+      "growth_x": 2.2856783866882324
+     },
+     {
+      "state": "MadhyaPradesh",
+      "infill_share": 0.061771608889102936,
+      "pop_density": 198.8175048828125,
+      "n": 11874,
+      "growth_x": 2.377995491027832
+     },
+     {
+      "state": "JammuandKashmir",
+      "infill_share": 0.05893038958311081,
+      "pop_density": 4.47657585144043,
+      "n": 4037,
+      "growth_x": 2.6901159286499023
+     },
+     {
+      "state": "Bihar",
+      "infill_share": 0.05726129561662674,
+      "pop_density": 1202.0853271484375,
+      "n": 3627,
+      "growth_x": 1.666979432106018
+     },
+     {
+      "state": "Rajasthan",
+      "infill_share": 0.05662158131599426,
+      "pop_density": 152.829345703125,
+      "n": 13120,
+      "growth_x": 2.690751552581787
+     },
+     {
+      "state": "Odisha",
+      "infill_share": 0.04293267801403999,
+      "pop_density": 193.5258026123047,
+      "n": 5997,
+      "growth_x": 2.201451063156128
+     },
+     {
+      "state": "Meghalaya",
+      "infill_share": 0.012961371801793575,
+      "pop_density": 104.9217758178711,
+      "n": 861,
+      "growth_x": 2.6516172885894775
+     },
+     {
+      "state": "ArunachalPradesh",
+      "infill_share": 0.0,
+      "pop_density": 5.874958515167236,
+      "n": 3174,
+      "growth_x": 2.0685999393463135
+     },
+     {
+      "state": "HimachalPradesh",
+      "infill_share": 0.0,
+      "pop_density": 42.61619567871094,
+      "n": 2152,
+      "growth_x": 2.647714853286743
+     },
+     {
+      "state": "Mizoram",
+      "infill_share": 0.0,
+      "pop_density": 32.94951629638672,
+      "n": 812,
+      "growth_x": 2.095907688140869
+     }
+    ]
+   },
+   "verdict": "ANSWERED",
+   "verdict_class": "live",
+   "got": "<b>Neither sprawl nor infill \u2014 the fringe.</b> Cells that were already 0.5\u20135% built took <b>60.2%</b> of all new construction in 1990\u20132000 and <b>74.6%</b> by 2015\u20132020. Over the same 30 years the core's share collapsed 16.7% \u2192 7.7% and virgin rural fell to 17.7%.<br><br>India is not building new towns and is not densifying its cores. <b>It is thickening the ring that was already half-built</b> \u2014 and doing so more single-mindedly every decade. This is the one question here that uses no drift at all, so nothing the referee killed can touch it."
+  },
+  {
+   "id": "fringe",
+   "tag": "land-value proxy \u00b7 the conversion frontier",
+   "title": "Is the peri-urban conversion frontier India's highest-change land?",
+   "why": "The rural\u2192suburban step is where land value multiplies hardest. If the embedding marks that frontier, it maps conversion without any price data.",
+   "expected": "Cells crossing rural\u2192suburban should carry clearly the highest corrected change in the country \u2014 we predicted a visible step above every other group.",
+   "method": "GHS-SMOD class at 2015 vs 2020. Corrected drift and novelty averaged 2018\u201320 per transition group (MEDIAN \u2014 corrected drift is MAD-standardised and right-skewed, so group means compare skew, not level); plus a matched test (5241 pairs, same state AND same land cover) of converting vs staying rural.",
+   "n": 121005,
+   "result": {
+    "groups": [
+     {
+      "group": "stayed rural",
+      "n": 96570,
+      "driftz": 0.17042946815490723,
+      "novelty": 0.023968487977981567,
+      "built_gain_pp": 0.05873051658272743
+     },
+     {
+      "group": "rural \u2192 suburban",
+      "n": 5244,
+      "driftz": -0.21414881944656372,
+      "novelty": 0.02077089250087738,
+      "built_gain_pp": 0.5030125379562378
+     },
+     {
+      "group": "suburban \u2192 denser",
+      "n": 445,
+      "driftz": -0.17350570857524872,
+      "novelty": 0.020658880472183228,
+      "built_gain_pp": 0.3454722464084625
+     },
+     {
+      "group": "stayed suburban",
+      "n": 15896,
+      "driftz": -0.3099171221256256,
+      "novelty": 0.020658880472183228,
+      "built_gain_pp": 0.26197922229766846
+     },
+     {
+      "group": "stayed urban centre",
+      "n": 2358,
+      "driftz": -0.11456157267093658,
+      "novelty": 0.0186375230550766,
+      "built_gain_pp": 0.40410664677619934
+     }
+    ],
+    "matched_auc": 0.4184153964013722,
+    "matched_ci95": [
+     0.4105345655562906,
+     0.42675926924054136
+    ],
+    "matched_n": 5241
+   },
+   "verdict": "KILLED",
+   "verdict_class": "dead",
+   "got": "<b>Inverted, again.</b> Cells converting rural\u2192suburban sit at -0.214 corrected drift while cells that stayed rural sit at +0.170. Matched on state and land cover, AUC 0.418, CI [0.411, 0.427] \u2014 excluding 0.50.<br><br>By this measure the conversion frontier is the <em>calmest</em> land in the country, not the most active. Same mechanism as Q4: <b>urbanisation stabilises a surface that farming keeps churning.</b>"
+  },
+  {
+   "id": "people",
+   "tag": "land-value proxy \u00b7 demand side",
+   "title": "Do people arrive where the land changed, or does land change where people are?",
+   "why": "Population inflow is the demand side of land price. The direction of the arrow decides whether land change is a leading or a trailing indicator.",
+   "expected": "We expected a weak but detectable positive arrow in at least one direction, most likely land-changes-first.",
+   "method": "WorldPop 2017 vs 2020 against corrected drift, Spearman on 113,956 cells with >10 people/km\u00b2. THIN BY CONSTRUCTION: free WorldPop stops at 2020, so this is a 3-year population window against 8 years of embeddings.",
+   "n": 113956,
+   "result": {
+    "lags": [
+     {
+      "lag": "land changed FIRST (drift 18\u201319 \u2192 pop growth 17\u201320)",
+      "rho": -0.06456857521321531
+     },
+     {
+      "lag": "people came FIRST (pop growth 17\u201318 \u2192 drift 21\u201323)",
+      "rho": -0.0114714259699578
+     },
+     {
+      "lag": "same window (drift 18\u201319 \u2192 pop growth 17\u201318)",
+      "rho": -0.02485899774004472
+     }
+    ],
+    "deciles": [
+     {
+      "decile": 1,
+      "pop_growth_pct": -6.819305419921875,
+      "driftz": 0.5395997762680054,
+      "n": 11396
+     },
+     {
+      "decile": 2,
+      "pop_growth_pct": -2.9572784900665283,
+      "driftz": 0.45127248764038086,
+      "n": 11395
+     },
+     {
+      "decile": 3,
+      "pop_growth_pct": -1.012839913368225,
+      "driftz": 0.3657921850681305,
+      "n": 11396
+     },
+     {
+      "decile": 4,
+      "pop_growth_pct": 0.454689085483551,
+      "driftz": 0.2898988723754883,
+      "n": 11395
+     },
+     {
+      "decile": 5,
+      "pop_growth_pct": 1.7437673807144165,
+      "driftz": 0.26937833428382874,
+      "n": 11396
+     },
+     {
+      "decile": 6,
+      "pop_growth_pct": 3.0088768005371094,
+      "driftz": 0.23626317083835602,
+      "n": 11396
+     },
+     {
+      "decile": 7,
+      "pop_growth_pct": 4.369217872619629,
+      "driftz": 0.2155693769454956,
+      "n": 11395
+     },
+     {
+      "decile": 8,
+      "pop_growth_pct": 6.0276079177856445,
+      "driftz": 0.22442811727523804,
+      "n": 11395
+     },
+     {
+      "decile": 9,
+      "pop_growth_pct": 8.47357177734375,
+      "driftz": 0.26388853788375854,
+      "n": 11396
+     },
+     {
+      "decile": 10,
+      "pop_growth_pct": 14.338800430297852,
+      "driftz": 0.53065425157547,
+      "n": 11396
+     }
+    ],
+    "ushape": {
+     "extreme_driftz": 0.4463537037372589,
+     "middle_driftz": 0.24040433764457703,
+     "auc_extreme_vs_middle": 0.549846432982935,
+     "ci95": [
+      0.5458937293723861,
+      0.5544854905485002
+     ]
+    }
+   },
+   "verdict": "PARTIAL",
+   "verdict_class": "part",
+   "got": "<b>As a straight arrow, dead in both directions</b> \u2014 \u03c1 -0.065 land-first, \u03c1 -0.011 people-first. But the deciles are a <b>U</b>.<br><br>Cells losing population fastest sit at +0.540 corrected drift and cells gaining fastest at +0.531, while demographically stable cells bottom out at +0.216. Extremes against the middle scores AUC 0.550, CI [0.546, 0.554]. <b>Land change marks demographic instability in either direction</b> \u2014 which is precisely why the linear correlation reads zero. The naive test would have called this nothing."
+  }
+ ],
+ "verdict_html": "<b>One sentence for all five.</b> Corrected drift measures surface <em>volatility</em>, not development \u2014 it tracks rainfall swings everywhere (\u03c1\u22480.33 against a 0.00 null), runs <em>backwards</em> on construction and on urban conversion because building stabilises land that farming churns, and is U-shaped in population because both collapse and boom disturb the ground while stability does not.<br><br><b>What that costs us.</b> For the land-value question this grid is the wrong instrument: a baseline that ignores satellites entirely predicts where India builds at AUC 0.977, against 0.63 for the embedding at its inverted best. <b>The honest use of drift is as a disturbance detector, not a development detector.</b><br><br><b>What survived.</b> Two things. The rainfall-volatility coupling \u2014 real, national, and the first referee-passing positive in this notebook. And Q5, which needed no embeddings at all: three-quarters of all Indian construction now lands in the already-half-built fringe. <em>The question that ignored the fancy signal is the one that answered cleanly.</em>"
+}

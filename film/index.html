@@ -1,0 +1,309 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A city of six shapes, and a film about robots &mdash; Nandit Vaish</title>
+<meta name="description" content="Twenty-five days in Unreal Engine: a neon street built from primitives, an operating contract, and a three-minute film shipped in nine builds.">
+<link rel="canonical" href="https://nanditvaish.com/film/"><meta property="og:title" content="A city of six shapes, and a film about robots"><meta property="og:description" content="Twenty-five days in Unreal Engine: a neon street built from primitives, an operating contract, and a three-minute film shipped in nine builds."><meta property="og:image" content="https://nanditvaish.com/assets/plates/street-poster.jpg"><meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --paper:#f6f3ec; --paper-2:#efeade; --plate:#0a0b0d;
+  --ink:#16181c; --ink-2:#4a4f57; --ink-3:#8b9098;
+  --rule:#ddd6c8; --rule-2:#c9c0ad;
+  --kill:#ae2f22; --live:#1c6553;
+  --serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --measure:38rem; --wide:64rem;
+}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
+  font-size:clamp(1.0625rem,1rem + .25vw,1.1875rem);line-height:1.62;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-weight:500;line-height:1.16;margin:0;letter-spacing:-.012em}
+p{margin:0}
+a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule-2)}
+a:hover{border-color:var(--ink)}
+
+.col{width:min(var(--measure),100% - 2.5rem);margin-inline:auto}
+.col-wide{width:min(var(--wide),100% - 2.5rem);margin-inline:auto}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:1px solid var(--ink);margin-bottom:0}
+.mast__in{display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:baseline;
+  justify-content:space-between;padding:1.1rem 0 .9rem}
+.mast__name{font-family:var(--mono);font-size:.75rem;letter-spacing:.2em;
+  text-transform:uppercase;border:0}
+.mast__nav{display:flex;gap:1.25rem;font-family:var(--mono);font-size:.6875rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.mast__nav a{border:0}
+.mast__nav a:hover{color:var(--ink);border-bottom:1px solid var(--ink)}
+
+/* ---------- abstract ---------- */
+.abstract{padding:5rem 0 3.5rem;border-bottom:1px solid var(--rule)}
+.abstract__eyebrow{font-family:var(--mono);font-size:.6875rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:1.75rem}
+.abstract h1{font-size:clamp(2rem,1.3rem + 3vw,3.5rem);letter-spacing:-.025em;
+  margin-bottom:1.75rem;text-wrap:balance}
+.abstract h1 em{font-style:italic}
+.abstract p+p{margin-top:1.1rem}
+.abstract .lede{font-size:1.125em}
+.drop::first-letter{float:left;font-size:3.6em;line-height:.84;padding:.06em .09em 0 0;
+  font-weight:500}
+
+/* ---------- plate (full-bleed dark) ---------- */
+.plate{background:var(--plate);color:#e9edf2;margin:3.5rem 0;padding:0;
+  border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.plate__in{width:min(var(--wide),100% - 2.5rem);margin-inline:auto;padding:2.5rem 0}
+.plate__cap{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
+  color:#8b9098;margin-top:1.25rem;line-height:1.6}
+.plate__cap b{color:#e9edf2;font-weight:400}
+.plate video,.plate img{display:block;width:100%;height:auto;border:1px solid #23262c}
+
+/* ---------- figure (on paper) ---------- */
+figure{margin:3.25rem 0}
+figcaption{font-family:var(--mono);font-size:.6875rem;line-height:1.65;
+  letter-spacing:.02em;color:var(--ink-2);margin-top:.9rem;
+  padding-top:.7rem;border-top:1px solid var(--rule)}
+figcaption b{font-weight:600;color:var(--ink)}
+
+/* ---------- simulation canvas ---------- */
+.sim{display:grid;gap:1.25rem}
+.sim__canvas{width:100%;aspect-ratio:16/7;background:#0a0b0d;display:block;
+  border:1px solid #23262c}
+.sim__bar{display:flex;flex-wrap:wrap;gap:1.5rem 2.25rem;align-items:baseline;
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;color:#8b9098}
+.sim__stat b{display:block;font-size:1.5rem;color:#e9edf2;font-weight:400;
+  letter-spacing:0;margin-top:.2rem}
+.sim__btn{margin-left:auto;background:none;border:1px solid #3a3f47;color:#e9edf2;
+  font:inherit;font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;
+  text-transform:uppercase;padding:.5rem 1rem;cursor:pointer}
+.sim__btn:hover{border-color:#e9edf2}
+
+/* ---------- scale band ---------- */
+.scale{border-bottom:1px solid var(--rule);padding:3rem 0}
+.scale__grid{display:grid;gap:2rem 1.5rem;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:48rem){.scale__grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.scale__n{font-size:1.875rem;line-height:1;letter-spacing:-.02em}
+.scale__l{font-family:var(--mono);font-size:.6875rem;line-height:1.55;
+  letter-spacing:.06em;color:var(--ink-2);margin-top:.55rem}
+
+/* ---------- contents ---------- */
+.contents{padding:3.5rem 0}
+.contents__label{font-family:var(--mono);font-size:.6875rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:2rem}
+.entry{display:block;border:0;border-top:1px solid var(--rule);padding:1.9rem 0;
+  transition:background .18s ease}
+.entry:last-of-type{border-bottom:1px solid var(--rule)}
+.entry:hover{background:var(--paper-2)}
+.entry__top{display:flex;gap:1rem;align-items:baseline;flex-wrap:wrap;
+  font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;color:var(--ink-3)}
+.entry__no{color:var(--ink)}
+.entry__when{margin-left:auto}
+.entry__t{font-size:1.5rem;margin:.7rem 0 .5rem;letter-spacing:-.018em}
+.entry__d{color:var(--ink-2);font-size:.9688em}
+.entry__verdicts{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.9rem}
+
+/* ---------- verdict chips ---------- */
+.chip{font-family:var(--mono);font-size:.625rem;letter-spacing:.1em;
+  text-transform:uppercase;padding:.2rem .5rem;border:1px solid var(--rule-2);
+  color:var(--ink-2);white-space:nowrap}
+.chip--kill{border-color:var(--kill);color:var(--kill)}
+.chip--live{border-color:var(--live);color:var(--live)}
+.chip--flag{border-style:dashed}
+
+/* ---------- note ---------- */
+.note{border-top:1px solid var(--ink);padding:3rem 0 1rem}
+.note__t{font-family:var(--mono);font-size:.6875rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:1rem}
+.note__form{display:grid;gap:.85rem;max-width:32rem}
+.note__form textarea,.note__form input{width:100%;background:transparent;
+  border:1px solid var(--rule-2);padding:.7rem .85rem;color:var(--ink);
+  font:inherit;font-size:.9375rem;font-family:var(--serif);resize:vertical}
+.note__form textarea{min-height:5.5rem}
+.note__form textarea:focus,.note__form input:focus{outline:none;border-color:var(--ink)}
+.note__form button{justify-self:start;background:var(--ink);color:var(--paper);
+  border:0;padding:.6rem 1.3rem;font-family:var(--mono);font-size:.6875rem;
+  letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.note__form button[disabled]{opacity:.5}
+.note__hint{font-family:var(--mono);font-size:.6875rem;color:var(--ink-3);line-height:1.6}
+.note__state{font-family:var(--mono);font-size:.75rem;color:var(--live)}
+
+/* ---------- colophon ---------- */
+.colophon{border-top:1px solid var(--ink);padding:2.5rem 0 4rem;
+  font-family:var(--mono);font-size:.6875rem;line-height:1.9;
+  letter-spacing:.04em;color:var(--ink-2)}
+.colophon dt{float:left;width:6.5rem;color:var(--ink-3)}
+.colophon dd{margin:0 0 .1rem 6.5rem}
+.colophon a{border-color:var(--rule-2)}
+
+/* ---------- hero (showcase register) ---------- */
+.hero{position:relative;background:var(--plate);border-bottom:1px solid var(--ink)}
+.hero__media{position:relative;width:100%;aspect-ratio:16/9;max-height:78svh;overflow:hidden}
+.hero__media video,.hero__media img{width:100%;height:100%;object-fit:cover;display:block}
+.hero__scrim{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(7,9,12,.50) 0%,rgba(7,9,12,.08) 30%,rgba(7,9,12,.55) 52%,rgba(7,9,12,.90) 76%,rgba(7,9,12,.97) 100%)}
+.hero__text{position:absolute;inset:auto 0 0 0;padding:0 0 clamp(1.75rem,4vw,3.25rem)}
+.hero__kicker{font-family:var(--mono);font-size:.6875rem;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(233,237,242,.88);margin-bottom:1rem;text-shadow:0 1px 12px rgba(7,9,12,.9)}
+.hero h1{color:#f7f8fa;text-shadow:0 2px 24px rgba(7,9,12,.75);font-size:clamp(1.75rem,1rem + 3.2vw,3.25rem);letter-spacing:-.028em;
+  max-width:24ch;text-wrap:balance}
+.hero h1 em{font-style:italic;color:#c9cfd6}
+
+/* ---------- project cards ---------- */
+.cards{padding:4.5rem 0 1rem;display:grid;gap:4.5rem}
+.card{display:block;border:0;text-decoration:none}
+.card__fig{background:var(--plate);border:1px solid var(--rule-2);overflow:hidden;
+  aspect-ratio:16/9}
+.card__fig img,.card__fig video{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .8s cubic-bezier(.2,.7,.3,1)}
+.card:hover .card__fig img,.card:hover .card__fig video{transform:scale(1.02)}
+.card__meta{display:flex;gap:1rem;align-items:baseline;flex-wrap:wrap;margin-top:1.1rem;
+  font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3)}
+.card__no{color:var(--ink)}
+.card__when{margin-left:auto;text-transform:none;letter-spacing:.06em}
+.card h2{font-size:clamp(1.5rem,1.1rem + 1.5vw,2.25rem);margin:.6rem 0 .6rem;
+  letter-spacing:-.022em}
+.card p{color:var(--ink-2);max-width:52ch}
+.card__go{display:inline-block;margin-top:1rem;font-family:var(--mono);font-size:.6875rem;
+  letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid var(--rule-2);
+  padding-bottom:.15rem}
+.card:hover .card__go{border-color:var(--ink)}
+
+/* ---------- graveyard swatch (market card) ---------- */
+.graveWrap{position:relative;width:100%;height:100%;background:var(--plate);
+  display:flex;align-items:center;justify-content:center}
+.grave{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;
+  width:min(78%,34rem)}
+.graveKey{position:absolute;left:clamp(1rem,4vw,2rem);bottom:clamp(1rem,4vw,2rem);
+  display:flex;gap:1.15rem;font-family:var(--mono);font-size:.625rem;letter-spacing:.1em;
+  text-transform:uppercase;color:#8b9098}
+.graveKey b{color:#e9edf2;font-weight:400}
+.graveKey s{display:inline-block;width:.55rem;height:.55rem;margin-right:.4rem;
+  text-decoration:none;vertical-align:middle}
+.grave i{display:block;aspect-ratio:1;background:#2a2d33}
+.grave i.d{background:#ae2f22}
+.grave i.t{background:#2f9e83}
+.grave i.o{background:#f2b45c}
+.grave i.x{background:#4a4f57}
+
+/* ---------- reveal ---------- */
+.js .rv{opacity:0;transform:translateY(10px);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1)}
+.js .rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
+
+/* ---------- notebook ---------- */
+.head{padding:4.5rem 0 3rem;border-bottom:1px solid var(--ink)}
+.head__eyebrow{font-family:var(--mono);font-size:.6875rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:1.5rem}
+.head h1{font-size:clamp(2rem,1.2rem + 3.4vw,3.5rem);letter-spacing:-.03em;max-width:19ch;
+  text-wrap:balance}
+.head__stand{margin-top:1.6rem;max-width:46ch;color:var(--ink-2);font-size:1.125rem}
+.head__facts{display:flex;flex-wrap:wrap;gap:2.25rem;margin-top:2.5rem;
+  font-family:var(--mono);font-size:.75rem;color:var(--ink-3)}
+.head__facts b{display:block;font-size:1.375rem;color:var(--ink);font-weight:400;
+  margin-bottom:.2rem;font-family:var(--serif)}
+
+.ent{padding:3.5rem 0;border-bottom:1px solid var(--rule)}
+.ent__top{display:flex;gap:1.25rem;align-items:baseline;
+  font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:1rem}
+.ent__no{color:var(--ink)}
+.ent__when{margin-left:auto;letter-spacing:.06em;text-transform:none}
+.ent h2{font-size:clamp(1.375rem,1.1rem + 1.2vw,2rem);letter-spacing:-.022em;
+  max-width:24ch;margin-bottom:1.25rem}
+.ent p+p{margin-top:1rem}
+.ent p{max-width:var(--measure)}
+.ent i{color:var(--ink-2)}
+
+.rule{margin:1.75rem 0 0;padding:1rem 0 1rem 1.25rem;border-left:2px solid var(--kill);
+  max-width:var(--measure)}
+.rule span{display:block;font-family:var(--mono);font-size:.625rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--kill);margin-bottom:.45rem}
+.rule p{font-size:1.0625rem}
+
+.pull{margin:1.75rem 0;font-size:clamp(1.25rem,1.05rem + .9vw,1.625rem);line-height:1.35;
+  letter-spacing:-.02em;max-width:26ch;color:var(--ink)}
+.pull::before{content:"\201C"} .pull::after{content:"\201D"}
+
+figure.t{margin:1.75rem 0 0;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9375rem;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:.625rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:400;padding:.5rem .75rem .5rem 0;
+  border-bottom:1px solid var(--ink)}
+td{padding:.5rem .75rem .5rem 0;border-bottom:1px solid var(--rule)}
+td.neg{color:var(--kill)} td.pos{color:var(--live)}
+figcaption{font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(--ink-2);
+  margin-top:.9rem;max-width:46rem}
+
+.figplate{margin:2.25rem 0 0;background:var(--plate);border:1px solid var(--rule-2)}
+.figplate img{width:100%;display:block}
+.figplate figcaption{padding:.85rem 1rem;margin:0;color:var(--ink-3);
+  border-top:1px solid #23262c;background:var(--plate)}
+
+.go{display:inline-block;margin-top:1.75rem;font-family:var(--mono);font-size:.6875rem;
+  letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid var(--rule-2);
+  padding-bottom:.15rem}
+.go:hover{border-color:var(--ink)}
+
+/* ---------- graveyard ---------- */
+.yard{padding:3.5rem 0}
+.yard h2{font-size:clamp(1.5rem,1.15rem + 1.4vw,2.25rem);margin-bottom:.9rem}
+.yard__intro{max-width:var(--measure);color:var(--ink-2);margin-bottom:2rem}
+.yard__filter{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.5rem}
+.yard__filter button{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
+  text-transform:uppercase;background:none;border:1px solid var(--rule-2);border-radius:2px;
+  padding:.3rem .6rem;cursor:pointer;color:var(--ink-2);font-weight:400}
+.yard__filter button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.th{padding:1.1rem 0;border-bottom:1px solid var(--rule);display:grid;gap:.35rem}
+.th__top{display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap}
+.th__n{font-family:var(--mono);font-size:.6875rem;color:var(--ink-3);min-width:2.25rem}
+.th__name{font-size:1.0625rem}
+.th__meta{margin-left:auto;font-family:var(--mono);font-size:.625rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.th__find{font-size:.9375rem;color:var(--ink-2);padding-left:3rem;max-width:60rem}
+.vd{font-family:var(--mono);font-size:.5625rem;letter-spacing:.12em;padding:.12rem .4rem;
+  border-radius:2px;border:1px solid}
+.vd-dead{color:var(--kill);border-color:var(--kill)}
+.vd-trust{color:var(--live);border-color:var(--live)}
+.vd-open{color:#8a6a1f;border-color:#8a6a1f}
+.vd-discount,.vd-tool,.vd-retired{color:var(--ink-3);border-color:var(--rule-2)}
+
+/* ---------- rising bar ---------- */
+.bar{padding:3.5rem 0;border-top:1px solid var(--ink)}
+.bar ol{list-style:none;margin:1.75rem 0 0;padding:0;counter-reset:b}
+.bar li{counter-increment:b;padding:.85rem 0 .85rem 3.25rem;position:relative;
+  border-bottom:1px solid var(--rule);max-width:52rem}
+.bar li::before{content:counter(b,decimal-leading-zero);position:absolute;left:0;
+  font-family:var(--mono);font-size:.6875rem;color:var(--ink-3);top:1.05rem}
+.bar li b{font-weight:500}
+.bar li span{display:block;font-size:.9375rem;color:var(--ink-2);margin-top:.2rem}
+</style></head><body>
+<header class="mast"><div class="mast__in col-wide">
+  <a class="mast__name" href="/">Nandit Vaish</a>
+  <nav class="mast__nav"><a href="/market/">Market</a><a href="/research-os/">Research OS</a><a href="/film/" aria-current="page">Film</a></nav>
+</div></header>
+<section class="head"><div class="col-wide"><p class="head__eyebrow">Notebook 03 &middot; July &ndash; August 2026</p><h1>A city of six shapes, and a film about robots</h1><p class="head__stand">Twenty-five days inside Unreal Engine, which began as &ldquo;make me a simple movie&rdquo; and turned into an argument about which parts of a creative process can be automated and which absolutely cannot.</p><div class="head__facts"><span><b>6</b>primitive shapes, one city</span><span><b>~95</b>hand-built materials</span><span><b>1,158</b>frames across six render passes</span><span><b>3:00</b>finished film, shipped</span></div></div></section><section class="ent"><div class="col-wide"><div class="ent__top"><span class="ent__no">01</span><span class="ent__when">31 July 2026</span></div><h2>The GUI era, and why it had to die</h2><p>Day one ran two things in parallel, and the tension between them turned out to be the whole project. One was screen automation &mdash; taking over the editor and clicking through it. The other was a scripting bridge over the engine&rsquo;s own remote-execution protocol, written the same morning.</p><p>The screen approach broke on its own terms within hours: it stops responding, the view does not move, the camera is unfathomable. But the fatal objection was not fragility.</p><p class="pull">We are stuck with what the agent can do. We never really explore what&rsquo;s possible &mdash; all options come out of that same number of combinations.</p><div class="rule"><span>The rule</span><p>Screen control is non-deterministic, and an options system depends on reproducibility. You cannot generate three comparable variants if the same input gives a different output. Scripting was not a convenience; it was the precondition for having choices at all.</p></div></div></section><section class="ent"><div class="col-wide"><div class="ent__top"><span class="ent__no">02</span><span class="ent__when">5 August 2026</span></div><h2>The cyberpunk street, in one very long day</h2><p>Around forty scripts, in an order you can read straight off the filenames: build the street, fix the street, rebuild it curved, make it cyberpunk, detail the buildings, a second detail pass, props, street furniture &mdash; bins, newspaper stands, stop signs, zebra crossings, hydrants. Then neon signage generated from scratch, then night, then blue hour, then sky, then three grading passes to land on &ldquo;just about sunset, street lights just coming on&rdquo;. Then rain textures, then a Niagara particle system. Then navigation, a walker, a camera move, and six render passes.</p><p>The geometry underneath all of it is six primitive shapes. No models, no asset packs. A whole noir street out of boxes, cylinders and light.</p><p>The method that produced the detail has a name now, though it did not then &mdash; comparison against reality, deliberately: <i>the wires are straight, and in reality wires are tangled, they have smaller wires wrapped around them, they are never this straight, they sag in the middle.</i></p><figure class="figplate"><img src="/assets/plates/street-poster.jpg" alt="A neon-lit wet street at night, seen from behind a walking figure" loading="lazy" decoding="async"><figcaption>One frame from the sixth pass. Everything visible here is a primitive shape with a hand-built material on it.</figcaption></figure><div class="rule"><span>The rule</span><p>The bottleneck was never the engine. It was review latency &mdash; &ldquo;do I have to render it every time to see what&rsquo;s happening?&rdquo; Everything good that came later descends from that question.</p></div></div></section><section class="ent"><div class="col-wide"><div class="ent__top"><span class="ent__no">03</span><span class="ent__when">6 August 2026</span></div><h2>Don&rsquo;t jump the gun</h2><p>The morning after the street, the work stopped: no scene, nothing built, because none of the specifications existed yet. What came out of that was a twenty-thousand-word operating contract, and it is the single most valuable artifact in the whole body of work &mdash; more than the street, more than the film.</p><p><b>The operator model.</b> It describes the human as &ldquo;merely a taste factor&rdquo;, and takes that literally: no editing skill, no engine knowledge. You can run a command, paste an error, record your voice, judge an image, and pick one of three. Every interaction is designed inside that envelope. The corollary is the useful half &mdash; you can reliably detect that something is wrong but rarely say why, so producing the signal is your job and translating it into a rule is the machine&rsquo;s.</p><p><b>The render ladder.</b> A one-minute contact sheet for a whole video is the primary review surface. Cheap regeneration is what makes &ldquo;none of these, do it again&rdquo; a rule you actually keep rather than one you abandon under time pressure.</p><p><b>The closed rejection menu.</b> Nine permitted complaints &mdash; too fast, too busy, can&rsquo;t read it, doesn&rsquo;t sound like me, looks generic, I don&rsquo;t believe it, nothing happened, saw it coming, lost me at a timestamp. A closed vocabulary is what makes taste into data.</p><p><b>Audio is the master clock.</b> Voice first, all timing derived from it &mdash; which converts pacing from an editing skill nobody has into a performance decision anyone can make at a microphone.</p><p class="pull">The slop feeling does not come from using AI. It comes from automating judgement.</p><div class="rule"><span>The rule</span><p>Agents do not learn; documents do. The compounding asset across a month of work was a single markdown file.</p></div></div></section><section class="ent"><div class="col-wide"><div class="ent__top"><span class="ent__no">04</span><span class="ent__when">August 2026</span></div><h2>Money behaves like a gas</h2><p>The first episode takes a 2000 paper on kinetic exchange and builds it. Two thousand agents each start with exactly one hundred. Two are picked at random, their holdings pooled, the pool split at random. Nobody is smarter, nobody cheats, and the total is conserved &mdash; asserted in the code, not assumed.</p><p>It converges to the Boltzmann&ndash;Gibbs distribution: the same law that describes how energy distributes among molecules in a gas. Inequality rises from nothing but fair trades.</p><p><b>And then the break</b>, which is the part that makes it honest rather than a party trick. The exponential fits roughly the bottom 90% of real income data. The top 1% follows a power law that random exchange cannot produce at any runtime. The physics explains the unremarkable part of the distribution and fails exactly where the argument actually is.</p><div class="rule"><span>The rule</span><p>The break is non-negotiable. Without it, a channel about hidden structure becomes a channel about everything being connected, which is the same genre as astrology.</p></div><a class="go" href="/#sim">Run the simulation on the home page &rarr;</a></div></section><section class="ent"><div class="col-wide"><div class="ent__top"><span class="ent__no">05</span><span class="ent__when">20&ndash;22 August 2026</span></div><h2>Humanoids 2050</h2><p>A detour that became the only finished film. It takes a bank&rsquo;s humanoid-robot projection and gives every number in it a scene: the hands alone at $9,315 against a human hand&rsquo;s 27 degrees of freedom; sensors at 37% of the bill of materials; six models unveiled in 2022 against fifty-one in 2024; China at 5,688 patents in five years against America&rsquo;s 1,483.</p><p>Three structural inventions hold it together. <b>Every chapter opens on a question card</b>, which doubles as a valid start point for a short-form cut. <b>A two-tone system</b> where warm is always cost, China, acceleration and the uncomfortable side of any comparison, and cool is cheap, America and the conservative number &mdash; the room itself is cool, so warm reads as intrusion. And <b>one time axis</b>: the entire video is a single element tree rendered as a pure function of time, so nothing mounts or unmounts at a scene boundary and editing one duration re-times everything downstream.</p><figure class="figplate"><img src="/assets/plates/film-poster.jpg" alt="A frame from the film showing the cost of a humanoid robot's hands" loading="lazy" decoding="async"><figcaption>The two-tone system doing its work: the cost is warm, the machine is cool, and the source is credited in the corner of every scene.</figcaption></figure><div class="rule"><span>The rule</span><p>The story was never the billion units. It was the flat decade &mdash; the ten years in the middle where nothing visible happens.</p></div></div></section><section class="ent"><div class="col-wide"><div class="ent__top"><span class="ent__no">06</span><span class="ent__when">August 2026</span></div><h2>The voice problem, which is not solved</h2><p>Several synthesis models were tried and rejected in the same words each time: shrill, mechanical, sounds like it came from a machine. A self-recorded take was rejected too, and then the honest objection arrived &mdash; the delivery is monotonous, not the timbre.</p><p>The response was not a better model. It was measurement. A delivery plan fits every line to its scene window and records, per line: the hard limit, the designed duration, the word count, the measured duration, the resulting words per minute, whether it fits, a speed multiplier, padding, and a shaped rewrite. Alongside it, a cue sheet with continuous room tone across the full three minutes, ticks while a counter runs, and an impact when a reveal lands.</p><p>Nine voices were auditioned as an options system. Nine builds shipped, including one in Nandit&rsquo;s own voice.</p><div class="rule"><span>The rule</span><p>When the generative approach fails, the fallback is not a better generator. It is measuring the thing you were hoping the generator would intuit.</p></div></div></section><section class="ent"><div class="col-wide"><div class="ent__top"><span class="ent__no">07</span><span class="ent__when">&mdash;</span></div><h2>The open ledger</h2><p>Several directories the contract refers to are still empty. Three documents it cites do not exist. The scene-kit module is a zero-byte file. The style decision is still open, which is precisely why the only renderer is named <i>scratch</i>. And the Unreal craft work and the channel system have never actually met &mdash; the first episode is drawn with a plotting library, not the engine.</p><div class="rule"><span>The rule</span><p>A recap that hides this is a brochure. One that shows it is a research log, and it is far more convincing.</p></div></div></section>
+<footer class="colophon"><div class="col-wide">
+  <p>Built with Claude. The research, the mistakes and the decisions are Nandit's;
+  a great deal of the code and the writing was done in conversation with it, and
+  saying so is more interesting than pretending otherwise.</p>
+  <p><a href="/">All work</a> &middot; <a href="mailto:vaishnandit@gmail.com">vaishnandit@gmail.com</a></p>
+</div></footer>
+<script>
+(function(){
+  var bs=[].slice.call(document.querySelectorAll('.yard__filter button'));
+  if(!bs.length)return;
+  var cards=[].slice.call(document.querySelectorAll('.th'));
+  bs.forEach(function(b){b.addEventListener('click',function(){
+    bs.forEach(function(x){x.classList.toggle('on',x===b)});
+    var f=b.dataset.f;
+    cards.forEach(function(c){
+      c.style.display=(f==='ALL'||c.dataset.v===f)?'':'none';});
+  })});
+})();
+</script></body></html>

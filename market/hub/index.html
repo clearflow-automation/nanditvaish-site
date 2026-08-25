@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trading Hub &mdash; the real thing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{--bg:#0b0d10;--pan:#12151a;--rule:#232830;--ink:#e6e9ee;--dim:#878e98;--acc:#c2683a;
+--mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;--sans:'Inter',system-ui,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.top{display:flex;align-items:center;gap:.9rem;padding:.75rem 1.1rem;
+border-bottom:1px solid var(--rule);flex-wrap:wrap;position:sticky;top:0;
+background:rgba(11,13,16,.94);backdrop-filter:blur(8px);z-index:5}
+.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase}
+.brand b{color:var(--acc);font-weight:400}
+.live{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;
+color:#0b0d10;background:var(--acc);padding:.2rem .5rem;border-radius:2px}
+.back{margin-left:auto;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;
+text-transform:uppercase;color:var(--dim);text-decoration:none}
+.back:hover{color:var(--ink)}
+.tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--rule);scrollbar-width:none;
+position:sticky;top:3.05rem;background:rgba(11,13,16,.94);backdrop-filter:blur(8px);z-index:4}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--dim);
+font:inherit;font-size:.82rem;padding:.7rem 1rem;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--acc)}
+.wrap{padding:2rem 1.1rem 4rem;max-width:78rem;margin:0 auto}
+.pane{display:none} .pane.on{display:block}
+.note{max-width:64ch;margin:0 0 1.6rem}
+.note h2{font-size:1.35rem;letter-spacing:-.02em;margin:0 0 .6rem;font-weight:600}
+.note p{margin:0;color:var(--dim)}
+.note b{color:var(--ink);font-weight:500} .note i{color:#b9c0c9;font-style:italic}
+figure{margin:0;border:1px solid var(--rule);border-radius:4px;overflow:hidden;
+background:var(--pan)}
+figure img{width:100%;display:block}
+.foot{border-top:1px solid var(--rule);padding:1.2rem 1.1rem;color:var(--dim);
+font-size:.78rem;max-width:78rem;margin:0 auto}
+</style></head><body>
+<div class="top">
+  <span class="brand">Trading<b>Hub</b></span>
+  <span class="live">Captured live</span>
+  <a class="back" href="/market/">&larr; notebook</a>
+</div>
+<nav class="tabs"><button class="tab on" data-i="0" data-s="today">Today</button><button class="tab" data-i="1" data-s="scanner">Levels & Scanner</button><button class="tab" data-i="2" data-s="failed_breaks">Failed Breaks</button><button class="tab" data-i="3" data-s="gati_paper">GATI</button><button class="tab" data-i="4" data-s="breadth">Breadth</button><button class="tab" data-i="5" data-s="rs_quadrant">Sector Rotation</button><button class="tab" data-i="6" data-s="vcp">VCP</button><button class="tab" data-i="7" data-s="research">Research</button><button class="tab" data-i="8" data-s="system">System</button><button class="tab" data-i="9" data-s="journal">Journal</button></nav>
+<main class="wrap"><section class="pane on" data-i="0">
+      <div class="note"><h2>The morning read</h2><p>The strip along the top is feed health, not decoration — tick feed age, equity LTP age, how much of the universe the scanner has covered (117 of 208), and the day’s regime call. Each index card carries a choppiness score <i>and its percentile</i>, so 0.125 is legible as p25 rather than as a bare number. The playbook row then collapses all of it into one instruction: <b>choppy tape → fade-wind on → hunt failed breaks</b>. The main table is titled in Hinglish because the tool was built for one person rather than for a market: <i>abhi kahan dekhna hai</i> — where to look right now.</p></div>
+      <figure><img src="/assets/hub/today.png" alt="Today tab of the trading hub"
+        loading="eager" decoding="async"></figure>
+    </section><section class="pane" data-i="1">
+      <div class="note"><h2>The full scan behind the summary</h2><p>Today shows the shortlist; this is the whole population the scanner tracks, across every timeframe on the fractal ladder — weekly reading yearly levels, daily reading monthly, intraday reading daily.</p></div>
+      <figure><img src="/assets/hub/scanner.png" alt="Levels & Scanner tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section><section class="pane" data-i="2">
+      <div class="note"><h2>A tool that argues with its own user</h2><p>Breaks that got trapped, classified <b>broke → failing → failed / reclaimed</b>, with live counters and a timeframe filter. The important part is the box at the top, which is a warning rather than a pitch: the fade tilt on choppy days is real and monotonic, <i>and</i> the mechanical average is about one basis point before costs. “Trending → trade breakouts” found no support at all. A dashboard that tells you not to trade its own list mechanically is doing the job properly.</p></div>
+      <figure><img src="/assets/hub/failed_breaks.png" alt="Failed Breaks tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section><section class="pane" data-i="3">
+      <div class="note"><h2>A paper book, priced honestly</h2><p>Positional momentum on relative strength, running forward on paper since 16 July. The fill assumptions are printed under the chart where they can be checked — <b>next-open entry, full costs, ten basis points of slippage, idle cash at six percent</b>. The regime gate is off, so the watchlist is what the rules <i>would</i> buy and the position count is zero out of ten. The rupee figures are simulated capital.</p></div>
+      <figure><img src="/assets/hub/gati_paper.png" alt="GATI tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section><section class="pane" data-i="4">
+      <div class="note"><h2>Breadth as a risk dial</h2><p>Tested both ways and kept as a gate rather than a scoring feature, because as a feature it added approximately nothing.</p></div>
+      <figure><img src="/assets/hub/breadth.png" alt="Breadth tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section><section class="pane" data-i="5">
+      <div class="note"><h2>Relative strength, by sector</h2><p>Ratio against momentum on the same universe the scanner runs on.</p></div>
+      <figure><img src="/assets/hub/rs_quadrant.png" alt="Sector Rotation tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section><section class="pane" data-i="6">
+      <div class="note"><h2>Volatility contraction</h2><p>Tightest coils first, ranked by percentile rather than by a raw number so that today is comparable with last month.</p></div>
+      <figure><img src="/assets/hub/vcp.png" alt="VCP tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section><section class="pane" data-i="7">
+      <div class="note"><h2>Every thread, with its verdict</h2><p>The catalogue of concluded research — sixty threads, each carrying the finding that ended it and a path to the evidence. Forty-one are dead.</p></div>
+      <figure><img src="/assets/hub/research.png" alt="Research tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section><section class="pane" data-i="8">
+      <div class="note"><h2>The tab that admits it is broken</h2><p>Last night’s end-of-day refresh failed, and the page says so in red at the top rather than degrading quietly. Every scheduled run is listed with its mode, its result, and a chip per step, so a failure points at the step that caused it. Underneath, the doctor reports <b>0 fail, 1 warn, 58 pass</b> — freshness per store, known option-chain gaps kept as known gaps, and delisted names excluded with the reason and the date. This is the tab that exists because a checker once reported clean while 499 symbols carried 55,457 duplicate rows. The account holder’s name is the one thing covered on this page.</p></div>
+      <figure><img src="/assets/hub/system.png" alt="System tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section><section class="pane" data-i="9">
+      <div class="note"><h2>The discretion journal</h2><p>Where a discretionary decision gets written down at the time it is taken, so it can be argued with later.</p></div>
+      <figure><img src="/assets/hub/journal.png" alt="Journal tab of the trading hub"
+        loading="lazy" decoding="async"></figure>
+    </section></main>
+<footer class="foot">Captured live on 25 August 2026 during market hours. Real data, real state, nothing staged. The only thing covered anywhere is the broker account holder’s name on the System tab.</footer>
+<script>
+var tabs=[].slice.call(document.querySelectorAll('.tab')),
+    panes=[].slice.call(document.querySelectorAll('.pane'));
+tabs.forEach(function(t){t.addEventListener('click',function(){
+  var i=t.dataset.i;
+  tabs.forEach(function(x){x.classList.toggle('on',x===t)});
+  panes.forEach(function(p){p.classList.toggle('on',p.dataset.i===i)});
+  history.replaceState(null,'','#'+t.dataset.s);
+  window.scrollTo(0,0);
+})});
+(function(){var h=location.hash.slice(1);if(!h)return;
+  var t=tabs.filter(function(x){return x.dataset.s===h})[0];if(t)t.click();})();
+</script></body></html>

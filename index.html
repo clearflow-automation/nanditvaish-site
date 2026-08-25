@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nandit Vaish</title>
+<meta name="description" content="Selected work by Nandit Vaish — market-structure research over 252 million rows, India mapped from orbit, and a neon city built entirely from primitive shapes.">
+<meta property="og:image" content="https://nanditvaish.com/assets/plates/street-poster.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="canonical" href="https://nanditvaish.com/">
+  <meta property="og:title" content="Nandit Vaish">
+  <meta property="og:description" content="Market research over 252 million rows, India from orbit, and a city made of six shapes and light.">
+  <meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --paper:#f6f3ec; --paper-2:#efeade; --plate:#0a0b0d;
+  --ink:#16181c; --ink-2:#4a4f57; --ink-3:#8b9098;
+  --rule:#ddd6c8; --rule-2:#c9c0ad;
+  --kill:#ae2f22; --live:#1c6553;
+  --serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --measure:38rem; --wide:64rem;
+}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
+  font-size:clamp(1.0625rem,1rem + .25vw,1.1875rem);line-height:1.62;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-weight:500;line-height:1.16;margin:0;letter-spacing:-.012em}
+p{margin:0}
+a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule-2)}
+a:hover{border-color:var(--ink)}
+
+.col{width:min(var(--measure),100% - 2.5rem);margin-inline:auto}
+.col-wide{width:min(var(--wide),100% - 2.5rem);margin-inline:auto}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:1px solid var(--ink);margin-bottom:0}
+.mast__in{display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:baseline;
+  justify-content:space-between;padding:1.1rem 0 .9rem}
+.mast__name{font-family:var(--mono);font-size:.75rem;letter-spacing:.2em;
+  text-transform:uppercase;border:0}
+.mast__nav{display:flex;gap:1.25rem;font-family:var(--mono);font-size:.6875rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.mast__nav a{border:0}
+.mast__nav a:hover{color:var(--ink);border-bottom:1px solid var(--ink)}
+
+/* ---------- abstract ---------- */
+.abstract{padding:5rem 0 3.5rem;border-bottom:1px solid var(--rule)}
+.abstract__eyebrow{font-family:var(--mono);font-size:.6875rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:1.75rem}
+.abstract h1{font-size:clamp(2rem,1.3rem + 3vw,3.5rem);letter-spacing:-.025em;
+  margin-bottom:1.75rem;text-wrap:balance}
+.abstract h1 em{font-style:italic}
+.abstract p+p{margin-top:1.1rem}
+.abstract .lede{font-size:1.125em}
+.drop::first-letter{float:left;font-size:3.6em;line-height:.84;padding:.06em .09em 0 0;
+  font-weight:500}
+
+/* ---------- plate (full-bleed dark) ---------- */
+.plate{background:var(--plate);color:#e9edf2;margin:3.5rem 0;padding:0;
+  border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.plate__in{width:min(var(--wide),100% - 2.5rem);margin-inline:auto;padding:2.5rem 0}
+.plate__cap{font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
+  color:#8b9098;margin-top:1.25rem;line-height:1.6}
+.plate__cap b{color:#e9edf2;font-weight:400}
+.plate video,.plate img{display:block;width:100%;height:auto;border:1px solid #23262c}
+
+/* ---------- figure (on paper) ---------- */
+figure{margin:3.25rem 0}
+figcaption{font-family:var(--mono);font-size:.6875rem;line-height:1.65;
+  letter-spacing:.02em;color:var(--ink-2);margin-top:.9rem;
+  padding-top:.7rem;border-top:1px solid var(--rule)}
+figcaption b{font-weight:600;color:var(--ink)}
+
+/* ---------- simulation canvas ---------- */
+.sim{display:grid;gap:1.25rem}
+.sim__canvas{width:100%;aspect-ratio:16/7;background:#0a0b0d;display:block;
+  border:1px solid #23262c}
+.sim__bar{display:flex;flex-wrap:wrap;gap:1.5rem 2.25rem;align-items:baseline;
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;color:#8b9098}
+.sim__stat b{display:block;font-size:1.5rem;color:#e9edf2;font-weight:400;
+  letter-spacing:0;margin-top:.2rem}
+.sim__btn{margin-left:auto;background:none;border:1px solid #3a3f47;color:#e9edf2;
+  font:inherit;font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;
+  text-transform:uppercase;padding:.5rem 1rem;cursor:pointer}
+.sim__btn:hover{border-color:#e9edf2}
+
+/* ---------- scale band ---------- */
+.scale{border-bottom:1px solid var(--rule);padding:3rem 0}
+.scale__grid{display:grid;gap:2rem 1.5rem;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:48rem){.scale__grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.scale__n{font-size:1.875rem;line-height:1;letter-spacing:-.02em}
+.scale__l{font-family:var(--mono);font-size:.6875rem;line-height:1.55;
+  letter-spacing:.06em;color:var(--ink-2);margin-top:.55rem}
+
+/* ---------- contents ---------- */
+.contents{padding:3.5rem 0}
+.contents__label{font-family:var(--mono);font-size:.6875rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:2rem}
+.entry{display:block;border:0;border-top:1px solid var(--rule);padding:1.9rem 0;
+  transition:background .18s ease}
+.entry:last-of-type{border-bottom:1px solid var(--rule)}
+.entry:hover{background:var(--paper-2)}
+.entry__top{display:flex;gap:1rem;align-items:baseline;flex-wrap:wrap;
+  font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;color:var(--ink-3)}
+.entry__no{color:var(--ink)}
+.entry__when{margin-left:auto}
+.entry__t{font-size:1.5rem;margin:.7rem 0 .5rem;letter-spacing:-.018em}
+.entry__d{color:var(--ink-2);font-size:.9688em}
+.entry__verdicts{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.9rem}
+
+/* ---------- verdict chips ---------- */
+.chip{font-family:var(--mono);font-size:.625rem;letter-spacing:.1em;
+  text-transform:uppercase;padding:.2rem .5rem;border:1px solid var(--rule-2);
+  color:var(--ink-2);white-space:nowrap}
+.chip--kill{border-color:var(--kill);color:var(--kill)}
+.chip--live{border-color:var(--live);color:var(--live)}
+.chip--flag{border-style:dashed}
+
+/* ---------- note ---------- */
+.note{border-top:1px solid var(--ink);padding:3rem 0 1rem}
+.note__t{font-family:var(--mono);font-size:.6875rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:1rem}
+.note__form{display:grid;gap:.85rem;max-width:32rem}
+.note__form textarea,.note__form input{width:100%;background:transparent;
+  border:1px solid var(--rule-2);padding:.7rem .85rem;color:var(--ink);
+  font:inherit;font-size:.9375rem;font-family:var(--serif);resize:vertical}
+.note__form textarea{min-height:5.5rem}
+.note__form textarea:focus,.note__form input:focus{outline:none;border-color:var(--ink)}
+.note__form button{justify-self:start;background:var(--ink);color:var(--paper);
+  border:0;padding:.6rem 1.3rem;font-family:var(--mono);font-size:.6875rem;
+  letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.note__form button[disabled]{opacity:.5}
+.note__hint{font-family:var(--mono);font-size:.6875rem;color:var(--ink-3);line-height:1.6}
+.note__state{font-family:var(--mono);font-size:.75rem;color:var(--live)}
+
+/* ---------- colophon ---------- */
+.colophon{border-top:1px solid var(--ink);padding:2.5rem 0 4rem;
+  font-family:var(--mono);font-size:.6875rem;line-height:1.9;
+  letter-spacing:.04em;color:var(--ink-2)}
+.colophon dt{float:left;width:6.5rem;color:var(--ink-3)}
+.colophon dd{margin:0 0 .1rem 6.5rem}
+.colophon a{border-color:var(--rule-2)}
+
+/* ---------- hero (showcase register) ---------- */
+.hero{position:relative;background:var(--plate);border-bottom:1px solid var(--ink)}
+.hero__media{position:relative;width:100%;aspect-ratio:16/9;max-height:78svh;overflow:hidden}
+.hero__media video,.hero__media img{width:100%;height:100%;object-fit:cover;display:block}
+.hero__scrim{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(7,9,12,.50) 0%,rgba(7,9,12,.08) 30%,rgba(7,9,12,.55) 52%,rgba(7,9,12,.90) 76%,rgba(7,9,12,.97) 100%)}
+.hero__text{position:absolute;inset:auto 0 0 0;padding:0 0 clamp(1.75rem,4vw,3.25rem)}
+.hero__kicker{font-family:var(--mono);font-size:.6875rem;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(233,237,242,.88);margin-bottom:1rem;text-shadow:0 1px 12px rgba(7,9,12,.9)}
+.hero h1{color:#f7f8fa;text-shadow:0 2px 24px rgba(7,9,12,.75);font-size:clamp(1.75rem,1rem + 3.2vw,3.25rem);letter-spacing:-.028em;
+  max-width:24ch;text-wrap:balance}
+.hero h1 em{font-style:italic;color:#c9cfd6}
+
+/* ---------- project cards ---------- */
+.cards{padding:4.5rem 0 1rem;display:grid;gap:4.5rem}
+.card{display:block;border:0;text-decoration:none}
+.card__fig{background:var(--plate);border:1px solid var(--rule-2);overflow:hidden;
+  aspect-ratio:16/9}
+.card__fig img,.card__fig video{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .8s cubic-bezier(.2,.7,.3,1)}
+.card:hover .card__fig img,.card:hover .card__fig video{transform:scale(1.02)}
+.card__meta{display:flex;gap:1rem;align-items:baseline;flex-wrap:wrap;margin-top:1.1rem;
+  font-family:var(--mono);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3)}
+.card__no{color:var(--ink)}
+.card__when{margin-left:auto;text-transform:none;letter-spacing:.06em}
+.card h2{font-size:clamp(1.5rem,1.1rem + 1.5vw,2.25rem);margin:.6rem 0 .6rem;
+  letter-spacing:-.022em}
+.card p{color:var(--ink-2);max-width:52ch}
+.card__go{display:inline-block;margin-top:1rem;font-family:var(--mono);font-size:.6875rem;
+  letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid var(--rule-2);
+  padding-bottom:.15rem}
+.card:hover .card__go{border-color:var(--ink)}
+
+/* ---------- graveyard swatch (market card) ---------- */
+.graveWrap{position:relative;width:100%;height:100%;background:var(--plate);
+  display:flex;align-items:center;justify-content:center}
+.grave{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;
+  width:min(78%,34rem)}
+.graveKey{position:absolute;left:clamp(1rem,4vw,2rem);bottom:clamp(1rem,4vw,2rem);
+  display:flex;gap:1.15rem;font-family:var(--mono);font-size:.625rem;letter-spacing:.1em;
+  text-transform:uppercase;color:#8b9098}
+.graveKey b{color:#e9edf2;font-weight:400}
+.graveKey s{display:inline-block;width:.55rem;height:.55rem;margin-right:.4rem;
+  text-decoration:none;vertical-align:middle}
+.grave i{display:block;aspect-ratio:1;background:#2a2d33}
+.grave i.d{background:#ae2f22}
+.grave i.t{background:#2f9e83}
+.grave i.o{background:#f2b45c}
+.grave i.x{background:#4a4f57}
+
+/* ---------- reveal ---------- */
+.js .rv{opacity:0;transform:translateY(10px);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1)}
+.js .rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="col-wide mast__in">
+    <a class="mast__name" href="/">Nandit Vaish</a>
+    <nav class="mast__nav">
+      <a href="/market/">Market</a>
+      <a href="/research-os/">Research OS</a>
+      <a href="/film/">Film</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="hero__media">
+      <video src="/assets/plates/street.mp4" poster="/assets/plates/street-poster.jpg"
+             autoplay muted loop playsinline preload="metadata"></video>
+      <div class="hero__scrim"></div>
+    </div>
+    <div class="hero__text">
+      <div class="col-wide">
+        <p class="hero__kicker">Nandit Vaish &middot; selected work, 2026</p>
+        <h1>Two hundred and fifty million rows of market data. India from orbit.
+          <em>A city made of six shapes and light.</em></h1>
+      </div>
+    </div>
+  </section>
+
+  <section class="scale">
+    <div class="col-wide"><div class="scale__grid rv"><div><p class="scale__n">252 M</p><p class="scale__l">rows of market data, 188k parquet parts</p></div><div><p class="scale__n">60</p><p class="scale__l">research threads run to a verdict</p></div><div><p class="scale__n">318,706</p><p class="scale__l">cells of India, nine years, one join key</p></div><div><p class="scale__n">1,158</p><p class="scale__l">frames rendered across six passes</p></div></div></div>
+  </section>
+
+  <section class="col-wide">
+    <div class="cards"><a class="card rv" href="/market/"><div class="card__fig"><div class="graveWrap"><div class="grave"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="t"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="t"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="o"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="t"></i><i class="x"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i><i class="d"></i><i class="x"></i><i class="x"></i><i class="x"></i><i class="t"></i><i class="x"></i><i class="x"></i></div><div class="graveKey"><span><s style="background:#ae2f22"></s><b>41</b> dead</span><span><s style="background:#2f9e83"></s><b>4</b> trusted</span><span><s style="background:#f2b45c"></s><b>3</b> open</span><span><s style="background:#4a4f57"></s><b>12</b> other</span></div></div></div><div class="card__meta"><span class="card__no">01</span><span class="card__when">April – August 2026</span></div><h2>Sixty ideas, run until they broke</h2><p>Four months of market research on 252 million rows of Indian equity and index-option history. A research programme that industrialised the part everyone skips: proving yourself wrong quickly, cheaply, and on the record.</p><span class="card__go">Open the notebook</span></a><a class="card rv" href="/research-os/"><div class="card__fig"><img src="/assets/plates/grid-poster.jpg" alt="India rendered as 318,706 cells, coloured by how much each changed" loading="lazy"></div><div class="card__meta"><span class="card__no">02</span><span class="card__when">July – August 2026</span></div><h2>India from orbit, on one join key</h2><p>Satellite embeddings over 318,706 five-kilometre cells, every year since 2017, joined to rainfall, land cover, districts, elevation and population. Nineteen terabytes of source reduced to 242 megabytes by choosing the right resolution.</p><span class="card__go">Open the notebook</span></a><a class="card rv" href="/film/"><div class="card__fig"><img src="/assets/plates/film-poster.jpg" alt="A frame from the film: the hands alone cost $9,315" loading="lazy"></div><div class="card__meta"><span class="card__no">03</span><span class="card__when">July – August 2026</span></div><h2>A street of six shapes, and a film about robots</h2><p>Twenty-five days inside Unreal Engine. A neon city built entirely from primitives, and a three-minute film that gives every number in a bank’s humanoid-robot projection its own scene — narrated, timed and shipped.</p><span class="card__go">Open the notebook</span></a></div>
+  </section>
+
+  <section class="plate rv">
+    <div class="plate__in">
+      <div class="sim">
+        <canvas id="sim" class="sim__canvas" aria-label="Live simulation of the distribution of money across 2,000 agents"></canvas>
+        <div class="sim__bar">
+          <span class="sim__stat">Gini<b id="sim-gini">0.000</b></span>
+          <span class="sim__stat">Exchanges<b id="sim-tx">0</b></span>
+          <span class="sim__stat">Agents<b>2,000</b></span>
+          <button class="sim__btn" id="sim-replay">Running</button>
+        </div>
+        <p class="plate__cap"><b>One you can play with &mdash; the distribution of <span id="sim-unit">money</span>, live.</b>
+          Two thousand agents start with exactly one hundred each. Two are picked at random,
+          their holdings pooled, the pool split at random. Nobody is smarter, nobody cheats,
+          and the total never changes. It settles into the same curve that describes
+          <a href="#" id="sim-label" style="border-color:#3a3f47">money among people</a>.
+          Inequality out of nothing but fair trades. From Episode 1 of the channel.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="col">
+    <div class="note rv">
+      <p class="note__t">Leave a note</p>
+      <form class="note__form">
+        <textarea name="body" required placeholder="A question, a correction, or something you think is wrong."></textarea>
+        <input type="text" name="from" placeholder="How to reach you (optional)">
+        <button type="submit">Send</button>
+        <p class="note__hint">Goes to Nandit only. Not published, not shown to anyone else.</p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="colophon">
+  <div class="col-wide">
+    <dl>
+      <dt>Contact</dt><dd><a href="mailto:vaishnandit@gmail.com">vaishnandit@gmail.com</a></dd>
+      <dt>Studio</dt><dd><a href="https://airlantern.com">airlantern.com</a> &mdash; websites for local businesses</dd>
+      <dt>Verdicts</dt><dd>Verified &middot; observed &middot; inferred &middot; flagged. Anything flagged is known-open and deliberately not smoothed over.</dd>
+      <dt>Set in</dt><dd>Newsreader and IBM Plex Mono. Figures are tabular throughout.</dd>
+    </dl>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+(function(){
+  var els=[].slice.call(document.querySelectorAll('.rv'));
+  var show=function(e){e.classList.add('in')};
+  if(!('IntersectionObserver' in window)){els.forEach(show);return}
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){if(x.isIntersecting){show(x.target);io.unobserve(x.target)}})
+  },{rootMargin:'0px 0px -6% 0px',threshold:.05});
+  els.forEach(function(e){io.observe(e)});
+  /* Content must never be able to stay invisible. A tab that never renders never
+     ticks a transition, so the class alone would leave it at opacity 0 forever. */
+  setTimeout(function(){
+    if(document.querySelectorAll('.rv.in').length===0){
+      io.disconnect();
+      els.forEach(function(e){ e.classList.add('in');
+        e.style.transition='none'; e.style.opacity='1'; e.style.transform='none'; });
+    }
+  },3000);
+})();
+
+document.querySelectorAll('.note__form').forEach(function(f){
+  f.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var btn=f.querySelector('button'), hint=f.querySelector('.note__hint');
+    var body=f.body.value.trim(); if(!body) return;
+    btn.disabled=true; btn.textContent='Sending';
+    fetch('/api/note',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({page:document.title,body:body,from:f.from.value.trim()})})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(){ f.innerHTML='<p class="note__state">Received. It came straight to Nandit \u2014 nobody else sees it.</p>'; })
+    .catch(function(){
+      btn.disabled=false; btn.textContent='Send';
+      hint.textContent='That did not send. Email vaishnandit@gmail.com instead.';
+      hint.style.color='var(--kill)';
+    });
+  });
+});
+
+/* Fig. 1 — kinetic exchange (Dragulescu & Yakovenko, EPJ B, 2000).
+   N agents all start equal. Repeatedly pick two at random, pool their money and
+   split the pool at random. Nobody is smarter. Nobody cheats. Money is conserved
+   exactly. Per the motion law this is SIMULATION motion: never eased, never
+   interpolated — every frame is the true state of the model. */
+(function(){
+  var cv=document.getElementById('sim'); if(!cv) return;
+  var ctx=cv.getContext('2d'), N=2000, START=100, BINS=54;
+  var m=new Float64Array(N), seed=20260825, frame=0, MAXF=620, tx=0, raf=null;
+  var $g=document.getElementById('sim-gini'), $t=document.getElementById('sim-tx'),
+      $b=document.getElementById('sim-replay'), $l=document.getElementById('sim-label');
+  var ENERGY=false;
+
+  function rnd(){ seed^=seed<<13; seed^=seed>>>17; seed^=seed<<5; return ((seed>>>0)%1e6)/1e6; }
+  function reset(){ for(var i=0;i<N;i++) m[i]=START; frame=0; tx=0; }
+
+  function gini(a){
+    var s=Array.prototype.slice.call(a).sort(function(x,y){return x-y}), n=s.length,
+        c=0, tot=0;
+    for(var i=0;i<n;i++){ c+=(i+1)*s[i]; tot+=s[i]; }
+    if(tot<=0) return 0;
+    return (2*c)/(n*tot) - (n+1)/n;
+  }
+
+  function size(){
+    var r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1;
+    cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d);
+    ctx.setTransform(d,0,0,d,0,0); return r;
+  }
+
+  function draw(){
+    var r=size(), W=r.width, H=r.height, pad=1;
+    ctx.clearRect(0,0,W,H);
+    var max=0; for(var i=0;i<N;i++) if(m[i]>max) max=m[i];
+    var top=Math.max(max,1), hist=new Array(BINS).fill(0);
+    for(i=0;i<N;i++){ var b=Math.min(BINS-1,Math.floor(m[i]/top*BINS)); hist[b]++; }
+    var hmax=1; for(i=0;i<BINS;i++) if(hist[i]>hmax) hmax=hist[i];
+    var bw=(W-pad*(BINS-1))/BINS;
+    for(i=0;i<BINS;i++){
+      var h=(hist[i]/hmax)*(H-2);
+      ctx.fillStyle = ENERGY ? 'rgba(242,180,92,'+(0.35+0.65*(hist[i]/hmax))+')'
+                             : 'rgba(79,214,200,'+(0.35+0.65*(hist[i]/hmax))+')';
+      ctx.fillRect(i*(bw+pad), H-h, bw, h);
+    }
+  }
+
+  function step(){
+    /* 1200 pairings per frame; front-loaded pacing is unnecessary here because
+       the histogram itself shows the early collapse clearly. */
+    for(var k=0;k<1200;k++){
+      var i=(rnd()*N)|0, j=(rnd()*N)|0; if(i===j) continue;
+      var pool=m[i]+m[j], share=rnd();
+      m[i]=pool*share; m[j]=pool-m[i]; tx++;
+    }
+    frame++;
+    draw();
+    $g.textContent=gini(m).toFixed(3);
+    $t.textContent=tx.toLocaleString('en-US');
+    if(frame<MAXF){ raf=requestAnimationFrame(step); }
+    else { raf=null; $b.textContent='Run it again'; }
+  }
+
+  function run(){ if(raf) cancelAnimationFrame(raf); seed=20260825; reset(); $b.textContent='Running'; step(); }
+  $b.addEventListener('click',run);
+  $l.addEventListener('click',function(){
+    ENERGY=!ENERGY;
+    $l.textContent = ENERGY ? 'energy among gas molecules' : 'money among people';
+    document.getElementById('sim-unit').textContent = ENERGY ? 'energy' : 'money';
+    draw();
+  });
+  window.addEventListener('resize',function(){ draw(); });
+  reset(); draw(); run();
+})();
+</script>
+</body>
+</html>
