@@ -204,6 +204,15 @@ figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-he
   min-height:3.4em;max-width:46rem}
 .tl__read b{color:var(--ink);font-weight:500}
 
+/* ---------- operations ---------- */
+.bound{margin:2.25rem 0;padding:1.1rem 1.25rem;border:1px solid var(--rule-2);
+  max-width:var(--measure);font-size:.9375rem;color:var(--ink-2)}
+.bound b{color:var(--ink);font-weight:500}
+.wall{margin:2.5rem 0;display:grid;gap:6px;grid-template-columns:repeat(2,1fr)}
+@media (min-width:40rem){.wall{grid-template-columns:repeat(4,1fr)}}
+.wall img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;
+  background:var(--plate);border:1px solid var(--rule-2)}
+
 /* ---------- rising bar ---------- */
 .bar{padding:3.5rem 0;border-top:1px solid var(--ink)}
 .bar ol{list-style:none;margin:1.75rem 0 0;padding:0;counter-reset:b}
@@ -519,7 +528,7 @@ def shell(slug, title, desc, body, og=""):
     here = ' aria-current="page"'
     nav = "".join(
         f'<a href="/{s}/"{here if s == slug else ""}>{n}</a>'
-        for s, n in [("market", "Market"), ("research-os", "Research OS"), ("film", "Film")])
+        for s, n in [("market", "Market"), ("research-os", "Research OS"), ("film", "Film"), ("operations", "Operations")])
     head_prod = (f'<link rel="canonical" href="https://nanditvaish.com/{slug}/">'
                  f'<meta property="og:title" content="{e(title)}">'
                  f'<meta property="og:description" content="{e(desc)}">'
@@ -1402,8 +1411,121 @@ film = head(
     ]),
 ])
 
+WALL = ["punyas-kriti","poshak-boutique","queen-madonna","beauty-life-salon",
+        "dr-mona-prabhakar","peaches-and-cream","beast-mode-gym","asha-clinic",
+        "british-unisex-salon","modern-looks-salon","empire-of-fitness","anagh-routes",
+        "bodyline-gym","rd-creations","v-sachdeva-associates","queen-madonna-premium"][:16]
+
+
+def wall():
+    seen, imgs = set(), ""
+    for w in WALL:
+        if w in seen:
+            continue
+        seen.add(w)
+        imgs += (f'<img src="/assets/ops/work/{w}.webp" alt="Demo site: '
+                 f'{w.replace("-", " ")}" loading="lazy" decoding="async">')
+    return f'<div class="wall">{imgs}</div>'
+
+
+operations = head(
+    "Jun 2026 &ndash; present",
+    "The machinery behind the studio",
+    "Lantern, the website studio, is the storefront. This page is the back room: the "
+    "engines that find the work, build the demos, audit the sites, and keep the whole "
+    "thing runnable by one person. One of the ventures here is parked, and it is "
+    "listed anyway, because a ledger that only shows what worked is marketing.",
+    [("16", "demo sites on the shelf"), ("381", "leads in the master book"),
+     ("3", "lead engines running"), ("1", "venture parked, kept on the record")],
+) + ('<section class="col-wide"><div class="bound"><b>What this page shows and '
+     'withholds.</b> Volumes are real and current. Rates, conversion numbers, client '
+     'economics and lead sources are deliberately absent: the same boundary the '
+     'trading hub draws, for the same reason.</div></section>') + "".join([
+    entry("01", "July 2026 &ndash; present", "The twenty-minute demo", [
+        p("The product is not a website; it is a system that turns a prospect&rsquo;s "
+          "name into a polished, personalised demo site in about twenty minutes, sent "
+          "over WhatsApp to open the conversation. If they like it, the demo becomes "
+          "the delivered site."),
+        p("Sixteen sit on the shelf right now. Two have become live client sites, and "
+          "the studio&rsquo;s own airlantern.com runs on the same machinery. Nothing "
+          "personalised is built before an advance clears: a rule that exists "
+          "because its absence was tried first."),
+        wall(),
+        rule("Ugly-but-live beats perfect-but-local. The demo you can send today is "
+             "worth more than the site you could finish next week."),
+    ]),
+    entry("02", "August 2026", "Three lead engines", [
+        p("Finding the shops is the actual bottleneck, so it got automated three ways: "
+          "an engine that reads public map listings for a locality and scores which "
+          "businesses have weak or missing websites; one that sweeps direct-to-consumer "
+          "brands; and one that walks business-association directories."),
+        p("Together they feed a master book of 381 leads across five regions of "
+          "Gurgaon and Delhi, each row carrying what the engines could verify before "
+          "any human dials. The engines are systems, not lists for sale. Which "
+          "sources they read and how they score stays in the back room."),
+        rule("The phone call is the expensive part. Everything before it should cost "
+             "nothing."),
+    ]),
+    entry("03", "August 2026", "The health check", [
+        p("More than half the lead list already has a website, and most of those sites "
+          "are quietly broken. For them the door is an automated audit: crawl the "
+          "site, score what is actually wrong (speed, search visibility, broken contact paths) and hand the owner a written review with the evidence "
+          "attached, free."),
+        p("Three of those scorecards are published on airlantern.com&rsquo;s reviews "
+          "ledger, findings and all. The review earns the fix; the fix earns the "
+          "retainer. It is the only door in the studio that ends in recurring "
+          "revenue."),
+        go("https://airlantern.com/#tuneup", "See the published scorecards"),
+    ]),
+    entry("04", "May &ndash; July 2026", "ClearFlow, the Canada experiment", [
+        p("Before Lantern there was ClearFlow: a spreadsheet-automation consultancy "
+          "aimed at Canadian small businesses, born from a KPMG observation: almost every SMB runs on a spreadsheet built by one employee years ago "
+          "that the whole company depends on and nobody dares touch."),
+        p("It was built properly. A brand with a written voice guide. A live site with "
+          "worked case studies. A lead scraper and calling lists. And a growth agent "
+          "that ran the social channels through Composio with a human-in-the-loop "
+          "approvals queue &mdash; every post drafted by the machine, cleared by a "
+          "person &mdash; plus a dashboard to run it all from one screen."),
+        plate("/assets/ops/clearflow.jpg",
+              "The ClearFlow site, still live today. The brand voice document ran to "
+              "fourteen kilobytes before a single client did.",
+              "The ClearFlow marketing site"),
+        p("It is parked, and not because the machinery failed: selling "
+          "hands-on automation into Canada from Gurgaon never found its footing, and "
+          "the same machinery pointed at shops twenty minutes away started working "
+          "immediately. The lead engines, the website pipeline and the agent patterns "
+          "on this page are its direct descendants."),
+        p("<i>The fossil is in the address bar: the GitHub organisation that serves "
+          "this very site is still named clearflow-automation.</i>"),
+        rule("A parked venture that taught the next one is not a failure; it is "
+             "tuition. It stays on the ledger."),
+    ]),
+    entry("05", "&mdash;", "The open ledger", [
+        p("What the back room is looking into right now, updated as it changes:"),
+        p("<b>Conversion experiments on the demo funnel.</b> Which opening "
+          "message, which demo mood, which follow-up interval actually gets a reply. "
+          "Volumes are small enough that honesty matters more than statistics here."),
+        p("<b>An automation engagement with a chartered-accountancy firm.</b> Scoping in September. What it becomes is not yet known, which is why this "
+          "line says nothing else."),
+        rule("Dead ideas cost nothing to publish. Live ones cost everything. The "
+             "ledger stays one step behind the work on purpose."),
+    ]),
+    entry("06", "&mdash;", "If some of this is for you", [
+        p("The machinery is for hire in one specific form: fast, honest websites for "
+          "local businesses, and tune-ups for the ones that already have a site that "
+          "is not working. That storefront is "
+          '<a href="https://airlantern.com">airlantern.com</a>: prices on the '
+          "page, WhatsApp button that reaches an actual person, and a form that, as "
+          "of this week, verifiably delivers."),
+    ]),
+])
+
 # ------------------------------------------------------------------ write ---
 PAGES = [
+    ("operations", "The machinery behind the studio",
+     "The engines behind a one-person web studio: lead finding, twenty-minute demos, "
+     "automated site audits, and the parked Canadian venture that taught it all.",
+     operations, "/assets/ops/card.jpg"),
     ("market", "Sixty ideas, run until they broke",
      "Four months of market research over 252 million rows: the teardown, the "
      "graveyard of 41 dead hypotheses, and the acceptance bar that kept rising.",

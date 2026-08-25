@@ -174,6 +174,11 @@ CARDS = [
             "its own scene \u2014 narrated, timed and shipped.",
        media='<img src="/assets/plates/film-poster.jpg" alt="A frame from the film: the hands alone cost $9,315" loading="lazy">',
        go="Open the notebook"),
+  dict(no='04', href='/operations/', when='June 2026 – present',
+       title='The machinery behind the studio',
+       desc='The back room of a one-person web studio: engines that find the leads, a pipeline that builds a personalised demo in twenty minutes, automated site audits — and the parked Canadian venture that taught it all.',
+       media='<img src="/assets/ops/card.jpg" alt="Eight of the sixteen demo sites on the shelf" loading="lazy">',
+       go='Open the back room'),
 ]
 
 cards_html = "".join(
@@ -220,6 +225,7 @@ __HEADP__
       <a href="/market/">Market</a>
       <a href="/research-os/">Research OS</a>
       <a href="/film/">Film</a>
+      <a href="/operations/">Operations</a>
     </nav>
   </div>
 </header>
