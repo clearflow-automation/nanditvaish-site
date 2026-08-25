@@ -718,6 +718,17 @@ market = head(
         rule("Out of this came an audit lens: eight failure classes, ordered not by "
              "theory but by how often each one has actually killed an edge in this "
              "repository. Every later idea was run through it before it was believed."),
+        p("One thing did survive the teardown, and not as a strategy. If the breakout "
+          "side is dead because half of all touches fail, then the failures themselves "
+          "are a population worth watching. That became a tab &mdash; and the tab argues "
+          "with whoever opens it:"),
+        plate("/assets/hub/failed_breaks.png",
+              "Breaks classified <b>broke &rarr; failing &rarr; failed / reclaimed</b>, "
+              "with live counters. The box at the top is a warning rather than a pitch: "
+              "the fade tilt on choppy days is real and monotonic, <i>and</i> the "
+              "mechanical average is about one basis point before costs. "
+              "&ldquo;Trending &rarr; trade breakouts&rdquo; found no support at all.",
+              "The Failed Breaks tab, showing its own caveat above the table"),
     ]),
     entry("06", "June &ndash; July 2026", "Honest costs, honest gates", [
         p("Brokerage is close to zero through the API, so the real costs are securities "
@@ -788,7 +799,14 @@ market = head(
           "anything is not declared. Add a directory and preflight goes red until you "
           "declare it."),
         rule("Drift is a failure, not a silent skip."),
-        go("/market/hub/", "See the hub this produced"),
+        plate("/assets/hub/system.png",
+              "The System tab today. Last night&rsquo;s refresh failed and it says so in "
+              "red at the top rather than degrading quietly; every scheduled run carries "
+              "a chip per step so a failure points at its own cause. The doctor reports "
+              "0 fail, 1 warn, 58 pass. The single covered line is the broker "
+              "account holder&rsquo;s name.",
+              "The hub's System tab showing a failed end-of-day refresh"),
+        go("/market/hub/", "All ten tabs"),
     ]),
     entry("11", "July 2026", "The live book, and the placebo", [
         p("A positional momentum book on relative strength went to forward paper "
@@ -797,6 +815,13 @@ market = head(
           "lands at roughly equal-weight buy-and-hold, which is a much less interesting "
           "claim. And the 48% compound headline splits into 85% across 2021&ndash;23 "
           "against 13.7% across 2024&ndash;26."),
+        plate("/assets/hub/gati_paper.png",
+              "The book as it runs. The fill assumptions are printed under the chart "
+              "where they can be argued with &mdash; next-open entry, full costs, ten "
+              "basis points of slippage, idle cash at six percent. The regime gate is "
+              "off, so the watchlist is what the rules <i>would</i> buy and the position "
+              "count is zero out of ten. The rupee figures are simulated capital.",
+              "The GATI paper book, showing equity, watchlist and fill assumptions"),
         rule("Quote the regime numbers, never the headline. A single figure spanning "
              "two regimes is an average of two different businesses."),
     ]),
