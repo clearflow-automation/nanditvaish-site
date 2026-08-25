@@ -638,7 +638,14 @@ market = head(
     "instrument that can prove, cheaply and repeatedly, that a signal is not there.",
     [("252 M", "rows &middot; 188k parquet parts"), ("60", "threads run to a verdict"),
      ("41", "dead"), ("242,764", "lines of Python")],
-) + "".join([
+) + ('<section class="ent"><div class="col-wide">' + plate(
+    "/assets/hub/today.png",
+    "Where four months of it ended up: the hub, on an ordinary Tuesday morning. Feed "
+    "ages along the top, a choppiness reading with its percentile for each index, and a "
+    "playbook line that turns all of that into one instruction. The table is headed in "
+    "Hinglish because the thing was built for one person rather than for a market "
+    "&mdash; <i>abhi kahan dekhna hai</i>, where to look right now.",
+    "The trading hub's Today tab during market hours") + "</div></section>") + "".join([
     entry("01", "18 April 2026", "A chart, on a screen", [
         p("It started as a Flask dashboard scanning NSE equities for CPR, Camarilla, "
           "relative strength, reversals and fractal coils. The organising idea was a "
