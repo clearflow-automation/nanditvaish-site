@@ -235,6 +235,14 @@ b50, b200 = b50[b50.index >= "2021-01-01"], b200[b200.index >= "2021-01-01"]
 stats["breadth_now_50"] = round(float(b50.iloc[-1]), 1)
 stats["breadth_now_200"] = round(float(b200.iloc[-1]), 1)
 
+# playable version: the same two series, daily, as JSON for the canvas widget
+bj = {"dates": [d.strftime("%Y-%m-%d") for d in b50.index],
+      "b50": [round(float(v), 1) for v in b50.values],
+      "b200": [round(float(v), 1) for v in b200.reindex(b50.index).values]}
+(OUT / "breadth.json").write_text(json.dumps(bj, separators=(",", ":")))
+print(f"  breadth.json    {len(bj['dates'])} days, "
+      f"{(OUT / 'breadth.json').stat().st_size // 1024} KB")
+
 fig, ax = frame()
 ax.axhline(50, color=DIM, lw=.8, ls=(0, (4, 4)))
 from matplotlib.dates import date2num

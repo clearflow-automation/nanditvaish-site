@@ -396,6 +396,19 @@ def player(prefix, years, label, caption):
             f'<p class="mapx__cap">{caption}</p></div>')
 
 
+def breadth_widget():
+    cap = (f"Today it reads {CH.get('breadth_now_50',0)}% above the 50-day and "
+           f"{CH.get('breadth_now_200',0)}% above the 200-day, drawn day by day "
+           "across five and a half years.")
+    return ('<div class="rrg"><div class="rrg__stage">'
+            '<canvas id="brdc" width="1240" height="640" '
+            'aria-label="Breadth of the universe above its own moving averages, animated weekly"></canvas></div>'
+            '<div class="rrg__ctl"><button class="play__btn" id="brdb">Play</button>'
+            '<input type="range" id="brdr" min="0" max="10" value="10" step="1" '
+            'aria-label="Week"><span class="rrg__date" id="brdd"></span></div>'
+            f'<p class="mapx__cap">{cap}</p></div>')
+
+
 def rrg():
     return ('<div class="rrg"><div class="rrg__stage">'
             '<canvas id="rrgc" width="1240" height="780" '
@@ -640,6 +653,67 @@ def shell(slug, title, desc, body, og=""):
   }});
 }})();
 
+/* breadth, playable */
+(function(){{
+  var cv=document.getElementById('brdc'); if(!cv)return;
+  var btn=document.getElementById('brdb'), rng=document.getElementById('brdr'),
+      dt=document.getElementById('brdd'), ctx=cv.getContext('2d'), D=null, t=null;
+  var W=cv.width,H=cv.height,L=58,R=16,T=40,B=36;
+  function X(i){{return L+(W-L-R)*i/(D.dates.length-1)}}
+  function Y(v){{return T+(H-T-B)*(1-v/100)}}
+  function draw(i){{
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0a0b0d';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#1d2127';ctx.lineWidth=1;
+    ctx.font='11px "IBM Plex Mono",monospace';
+    for(var g=0;g<=100;g+=20){{
+      ctx.beginPath();ctx.moveTo(L,Y(g));ctx.lineTo(W-R,Y(g));ctx.stroke();
+      ctx.fillStyle='#8b9098';ctx.fillText(String(g),L-30,Y(g)+4);
+    }}
+    ctx.setLineDash([4,4]);ctx.strokeStyle='#8b9098';
+    ctx.beginPath();ctx.moveTo(L,Y(50));ctx.lineTo(W-R,Y(50));ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#e9e7e4';
+    ctx.fillText('BREADTH \u00b7 SHARE OF THE UNIVERSE ABOVE ITS OWN MOVING AVERAGE',L,22);
+    for(var j=1;j<=i;j++){{
+      var v0=D.b50[j-1],v1=D.b50[j]; if(v0==null||v1==null)continue;
+      ctx.fillStyle=(v1>=50)?'rgba(47,158,131,.12)':'rgba(174,47,34,.16)';
+      ctx.beginPath();
+      ctx.moveTo(X(j-1),Y(50));ctx.lineTo(X(j-1),Y(v0));
+      ctx.lineTo(X(j),Y(v1));ctx.lineTo(X(j),Y(50));ctx.closePath();ctx.fill();
+    }}
+    function series(arr,col,lw){{
+      ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.beginPath();var m=false;
+      for(var j=0;j<=i;j++){{var v=arr[j];if(v==null){{m=false;continue}}
+        var x=X(j),y=Y(v); if(!m){{ctx.moveTo(x,y);m=true}}else ctx.lineTo(x,y);}}
+      ctx.stroke();
+    }}
+    series(D.b200,'#6b7280',1.1);
+    series(D.b50,'#e9e7e4',1.6);
+    var v=D.b50[i];
+    if(v!=null){{ctx.fillStyle='#e0705f';ctx.beginPath();
+      ctx.arc(X(i),Y(v),4,0,7);ctx.fill();}}
+    dt.textContent=D.dates[i]+' \u00b7 '+(D.b50[i]==null?'\u2014':D.b50[i]+'%');
+    rng.value=i;
+  }}
+  function stop(){{clearInterval(t);t=null;btn.textContent='Play'}}
+  fetch('/assets/charts/breadth.json').then(function(r){{return r.json()}})
+  .then(function(d){{
+    D=d;rng.max=d.dates.length-1;rng.value=d.dates.length-1;
+    draw(d.dates.length-1);
+    btn.addEventListener('click',function(){{
+      if(t)return stop();
+      btn.textContent='Pause';
+      var i=+rng.value; if(i>=d.dates.length-1)i=0;
+      t=setInterval(function(){{
+        i=Math.min(i+5,D.dates.length-1);if(i>=d.dates.length){{stop();return}}
+        draw(i);
+      }},45);
+    }});
+    rng.addEventListener('input',function(){{stop();draw(+rng.value)}});
+  }});
+}})();
+
 /* sector rotation */
 (function(){{
   var cv=document.getElementById('rrgc'); if(!cv)return;
@@ -856,13 +930,11 @@ market = head(
         rule("Relative strength, index regime and breadth are a risk dial, not a return "
              "booster. Tested both ways, they work as gates and add approximately "
              "nothing as scoring features."),
-        plate("/assets/charts/breadth.png",
-              f"The dial itself, computed from the store: the share of all "
-              f"{CH.get('symbols',502)} names above their own 50- and 200-day averages, "
-              f"2021 to date. Green when the majority is participating, red when it is "
-              f"not. Today it reads {CH.get('breadth_now_50',0)}% and "
-              f"{CH.get('breadth_now_200',0)}%.",
-              "Breadth of the universe above its own moving averages since 2021"),
+        p("Here is the dial itself, computed from the store and playable. Press play "
+          "and watch five and a half years of participation breathe: the share of all "
+          "502 names above their own 50-day average (bright) and 200-day average "
+          "(faint). Green when the majority is participating, red when it is not."),
+        breadth_widget(),
         p("And the rotation the hub&rsquo;s sector tab watches, running on the real "
           "data. Each dot is a sector&rsquo;s relative strength against the universe, "
           "plotted against the momentum of that strength; the tail is its last eight "
@@ -1193,7 +1265,7 @@ research = head(
 film = head(
     "Jul &ndash; Aug 2026",
     "A city of six shapes, and a film about robots",
-    "Twenty-five days inside Unreal Engine, which began as &ldquo;make me a simple "
+    "A month inside Unreal Engine, which began as &ldquo;make me a simple "
     "movie&rdquo; and turned into an argument about which parts of a creative process "
     "can be automated and which absolutely cannot.",
     [("6", "primitive shapes, one city"), ("~95", "hand-built materials"),
@@ -1215,8 +1287,8 @@ film = head(
              "input gives a different output. Scripting was not a convenience; it was "
              "the precondition for having choices at all."),
     ]),
-    entry("02", "5 August 2026", "The cyberpunk street, in one very long day", [
-        p("Around forty scripts, in an order you can read straight off the filenames: "
+    entry("02", "early August 2026", "The cyberpunk street: forty scripts, six renders", [
+        p("The street went up in layers, and the layers are still legible in the script names, right down to the marathon session where most of it landed: "
           "build the street, fix the street, rebuild it curved, make it cyberpunk, "
           "detail the buildings, a second detail pass, props, street furniture: bins, newspaper stands, stop signs, zebra crossings, hydrants. Then neon "
           "signage generated from scratch, then night, then blue hour, then sky, then "
@@ -1282,7 +1354,8 @@ film = head(
         go("/#sim", "Run the simulation on the home page"),
     ]),
     entry("05", "20&ndash;22 August 2026", "Humanoids 2050", [
-        p("A detour that became the only finished film. It takes a bank&rsquo;s "
+        p("The first film the whole machine shipped end to end: research, twenty-five "
+          "scenes, voice, sound and nine builds. It takes a bank&rsquo;s "
           "humanoid-robot projection and gives every number in it a scene: the hands "
           "alone at $9,315 against a human hand&rsquo;s 27 degrees of freedom; sensors "
           "at 37% of the bill of materials; six models unveiled in 2022 against "

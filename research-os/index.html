@@ -527,6 +527,67 @@ figcaption{font-family:var(--serif);font-style:italic;font-size:.9688rem;line-he
   });
 })();
 
+/* breadth, playable */
+(function(){
+  var cv=document.getElementById('brdc'); if(!cv)return;
+  var btn=document.getElementById('brdb'), rng=document.getElementById('brdr'),
+      dt=document.getElementById('brdd'), ctx=cv.getContext('2d'), D=null, t=null;
+  var W=cv.width,H=cv.height,L=58,R=16,T=40,B=36;
+  function X(i){return L+(W-L-R)*i/(D.dates.length-1)}
+  function Y(v){return T+(H-T-B)*(1-v/100)}
+  function draw(i){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0a0b0d';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#1d2127';ctx.lineWidth=1;
+    ctx.font='11px "IBM Plex Mono",monospace';
+    for(var g=0;g<=100;g+=20){
+      ctx.beginPath();ctx.moveTo(L,Y(g));ctx.lineTo(W-R,Y(g));ctx.stroke();
+      ctx.fillStyle='#8b9098';ctx.fillText(String(g),L-30,Y(g)+4);
+    }
+    ctx.setLineDash([4,4]);ctx.strokeStyle='#8b9098';
+    ctx.beginPath();ctx.moveTo(L,Y(50));ctx.lineTo(W-R,Y(50));ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#e9e7e4';
+    ctx.fillText('BREADTH · SHARE OF THE UNIVERSE ABOVE ITS OWN MOVING AVERAGE',L,22);
+    for(var j=1;j<=i;j++){
+      var v0=D.b50[j-1],v1=D.b50[j]; if(v0==null||v1==null)continue;
+      ctx.fillStyle=(v1>=50)?'rgba(47,158,131,.12)':'rgba(174,47,34,.16)';
+      ctx.beginPath();
+      ctx.moveTo(X(j-1),Y(50));ctx.lineTo(X(j-1),Y(v0));
+      ctx.lineTo(X(j),Y(v1));ctx.lineTo(X(j),Y(50));ctx.closePath();ctx.fill();
+    }
+    function series(arr,col,lw){
+      ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.beginPath();var m=false;
+      for(var j=0;j<=i;j++){var v=arr[j];if(v==null){m=false;continue}
+        var x=X(j),y=Y(v); if(!m){ctx.moveTo(x,y);m=true}else ctx.lineTo(x,y);}
+      ctx.stroke();
+    }
+    series(D.b200,'#6b7280',1.1);
+    series(D.b50,'#e9e7e4',1.6);
+    var v=D.b50[i];
+    if(v!=null){ctx.fillStyle='#e0705f';ctx.beginPath();
+      ctx.arc(X(i),Y(v),4,0,7);ctx.fill();}
+    dt.textContent=D.dates[i]+' · '+(D.b50[i]==null?'—':D.b50[i]+'%');
+    rng.value=i;
+  }
+  function stop(){clearInterval(t);t=null;btn.textContent='Play'}
+  fetch('/assets/charts/breadth.json').then(function(r){return r.json()})
+  .then(function(d){
+    D=d;rng.max=d.dates.length-1;rng.value=d.dates.length-1;
+    draw(d.dates.length-1);
+    btn.addEventListener('click',function(){
+      if(t)return stop();
+      btn.textContent='Pause';
+      var i=+rng.value; if(i>=d.dates.length-1)i=0;
+      t=setInterval(function(){
+        i=Math.min(i+5,D.dates.length-1);if(i>=d.dates.length){stop();return}
+        draw(i);
+      },45);
+    });
+    rng.addEventListener('input',function(){stop();draw(+rng.value)});
+  });
+})();
+
 /* sector rotation */
 (function(){
   var cv=document.getElementById('rrgc'); if(!cv)return;
