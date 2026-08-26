@@ -373,7 +373,7 @@ SCENES = [
 
 
 def filmplayer():
-    return ('<figure class="vid"><video controls preload="metadata" '
+    return ('<figure class="vid" id="watch"><video controls preload="metadata" '
             'poster="/assets/plates/film-poster.jpg" '
             'src="/assets/film/humanoids-2050.mp4"></video>'
             '<figcaption>Humanoids 2050: three minutes, twenty-five scenes, '
@@ -479,8 +479,9 @@ def timeline(threads):
             f'placed on the month it was concluded and coloured by its verdict.</p></div>')
 
 
-def entry(no, when, title, blocks):
-    return (f'<section class="ent"><div class="col-wide">'
+def entry(no, when, title, blocks, eid=None):
+    aid = f' id="{eid}"' if eid else ""
+    return (f'<section class="ent"{aid}><div class="col-wide">'
             f'<div class="ent__top"><span class="ent__no">{no}</span>'
             f'<span class="ent__when">{when}</span></div>'
             f"<h2>{title}</h2>{''.join(blocks)}</div></section>")
@@ -1319,7 +1320,9 @@ film = head(
     "can be automated and which absolutely cannot.",
     [("6", "primitive shapes, one city"), ("~95", "hand-built materials"),
      ("1,158", "frames across six render passes"), ("3:00", "finished film, shipped")],
-) + "".join([
+) + ('<section class="col-wide">'
+     + go("#watch", "The film is real and three minutes long. Watch it first")
+     + "</section>") + "".join([
     entry("01", "31 July 2026", "The GUI era, and why it had to die", [
         p("Day one ran two things in parallel, and the tension between them turned out "
           "to be the whole project. One was screen automation: taking over the "
@@ -1476,7 +1479,9 @@ operations = head(
     "agent that ran a company&rsquo;s socials under human approval, the engines that "
     "find the work, the pipeline that personalises a website in twenty minutes, and "
     "the generators that write the paperwork. One venture here is parked and listed "
-    "anyway, because a ledger that only shows what worked is marketing.",
+    "anyway, because a ledger that only shows what worked is marketing. If you are "
+    "reading this page wondering whom any of it is for, "
+    '<a href="#for-you">the last entry answers exactly that</a>.',
     [("16", "demo sites on the shelf"), ("381", "leads in the master book"),
      ("13", "agent drafts awaiting approval, on disk today"),
      ("18", "document generators, zero hand-made paperwork")],
@@ -1610,7 +1615,7 @@ operations = head(
         rule("Dead ideas cost nothing to publish. Live ones cost everything. The "
              "ledger stays one step behind the work on purpose."),
     ]),
-    entry("08", "&mdash;", "If some of this is for you", [
+    entry("08", "&mdash;", "If some of this is for you", eid="for-you", blocks=[
         p("The machinery is for hire in one specific form: fast, honest websites "
           "for local businesses, and tune-ups for the ones whose site is quietly "
           "failing them. That storefront is "
@@ -1624,7 +1629,7 @@ operations = head(
 PAGES = [
     ("operations", "The machinery behind the studio",
      "The engines behind a one-person web studio: lead finding, twenty-minute demos, "
-     "automated site audits, and the parked Canadian venture that taught it all.",
+     "automated site audits, and the agent-run venture that came first and taught it all.",
      operations, "/assets/ops/card.jpg"),
     ("market", "Sixty ideas, run until they broke",
      "Four months of market research over 252 million rows: the teardown, the "

@@ -195,28 +195,30 @@ grave = "".join('<i class="%s"></i>' % _CLS.get(t.get("verdict"),"x") for t in T
 CARDS = [
   dict(no="01", href="/market/", when="April \u2013 August 2026",
        title="Sixty ideas, run until they broke",
-       desc="Four months of market research on 252 million rows of Indian equity and index-option "
-            "history. A research programme that industrialised the part everyone skips: proving "
+       desc="A four-month research programme over 252 million rows of Indian equity and "
+            "index-option history, industrialising the part everyone skips: proving "
             "yourself wrong quickly, cheaply, and on the record.",
        media='<div class="graveWrap"><div class="grave">%s</div><div class="graveKey"><span><s style="background:#ae2f22"></s><b>41</b> dead</span><span><s style="background:#2f9e83"></s><b>4</b> trusted</span><span><s style="background:#f2b45c"></s><b>3</b> open</span><span><s style="background:#4a4f57"></s><b>12</b> other</span></div></div>' % grave,
        go="Open the notebook"),
   dict(no="02", href="/research-os/", when="July \u2013 August 2026",
        title="India from orbit, on one join key",
-       desc="Satellite embeddings over 318,706 five-kilometre cells, every year since 2017, joined "
-            "to rainfall, land cover, districts, elevation and population. Nineteen terabytes of "
-            "source reduced to 242 megabytes by choosing the right resolution.",
+       desc="A mapping study of India from orbit: satellite embeddings over 318,706 "
+            "five-kilometre cells, every year since 2017, joined to rainfall, land cover, "
+            "districts, elevation and population. Nineteen terabytes reduced to 242 megabytes.",
        media='<img src="/assets/plates/grid-poster.jpg" alt="India rendered as 318,706 cells, coloured by how much each changed" loading="lazy">',
        go="Open the notebook"),
   dict(no="03", href="/film/", when="July \u2013 August 2026",
        title="A street of six shapes, and a film about robots",
-       desc="Twenty-five days inside Unreal Engine. A neon city built entirely from primitives, and "
-            "a three-minute film that gives every number in a bank\u2019s humanoid-robot projection "
-            "its own scene \u2014 narrated, timed and shipped.",
+       desc="A finished three-minute film, watchable inside, and the notebook of its making: "
+            "every number in a bank\u2019s humanoid-robot projection given its own scene, in a "
+            "neon city built from six primitive shapes inside Unreal Engine.",
        media='<img src="/assets/plates/film-poster.jpg" alt="A frame from the film: the hands alone cost $9,315" loading="lazy">',
        go="Open the notebook"),
   dict(no='04', href='/operations/', when='June 2026 – present',
        title='The machinery behind the studio',
-       desc='The back room of a one-person web studio: engines that find the leads, a pipeline that builds a personalised demo in twenty minutes, automated site audits — and the parked Canadian venture that taught it all.',
+       desc='The back room of a one-person web studio: engines that find the leads, a '
+            'pipeline that builds a personalised demo in twenty minutes, automated site '
+            'audits, and the agent-run venture that came first and taught it all.',
        media='<img src="/assets/ops/card.jpg" alt="Eight of the sixteen demo sites on the shelf" loading="lazy">',
        go='Open the back room'),
 ]
@@ -237,7 +239,7 @@ scale_html="".join(
 
 HEAD_PROD = """<link rel="canonical" href="https://nanditvaish.com/">
   <meta property="og:title" content="Nandit Vaish">
-  <meta property="og:description" content="Market research over 252 million rows, India from orbit, and a city made of six shapes and light.">
+  <meta property="og:description" content="A research portfolio, four rooms: market research over 252 million rows, India from orbit, a finished film of six shapes and light, and a studio's machinery.">
   <meta property="og:type" content="website">"""
 
 HTML = """<!doctype html>
@@ -246,7 +248,7 @@ HTML = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nandit Vaish</title>
-<meta name="description" content="Selected work by Nandit Vaish \u2014 market-structure research over 252 million rows, India mapped from orbit, and a neon city built entirely from primitive shapes.">
+<meta name="description" content="A research portfolio: four months of market research over 252 million rows, India mapped from orbit, a finished film built from six primitive shapes, and the machinery of a one-person web studio.">
 <meta property="og:image" content="https://nanditvaish.com/assets/plates/street-poster.jpg">
 <meta name="twitter:card" content="summary_large_image">
 __ROBOTS__
@@ -283,8 +285,18 @@ __HEADP__
         <h1>I build instruments that <em>argue back.</em></h1>
         <p class="hero__deck">A market engine that killed forty-one of its own trading
           ideas. A satellite study that failed its own referee, and said so.
-          A city made of six shapes and light.</p>
+          A city made of six shapes and light. And the machinery of a one-person
+          web studio, with the covers off.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="standfirst">
+    <div class="col-wide">
+      <p class="rv">Four rooms, one method: build an instrument, let it try to kill
+      the idea, and keep every verdict it returns, the dead ones especially. This
+      site is a research portfolio, the record of how one person works. The shop is
+      elsewhere, at <a href="https://airlantern.com">airlantern.com</a>.</p>
     </div>
   </section>
 
