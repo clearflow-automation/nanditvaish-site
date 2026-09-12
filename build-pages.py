@@ -1266,7 +1266,7 @@ research = head(
           "That is worse than a coin."),
         rule("Each kill was the referee check on the previous one. Three rounds of "
              "&ldquo;fine, but&rdquo; is what an honest retreat looks like written down."),
-    ]),
+    ], eid="referee"),
     entry("07", "21 August 2026, 02:14", "Five pre-registered questions", [
         p("Predictions written in code before the test ran. Two killed, two partial, "
           "one answered."),
@@ -1474,13 +1474,13 @@ def wall():
 
 operations = head(
     "May 2026 &ndash; present",
-    "The machinery behind the studio",
-    "Lantern, the website studio, is the storefront. This page is the back room: the "
-    "agent that ran a company&rsquo;s socials under human approval, the engines that "
-    "find the work, the pipeline that personalises a website in twenty minutes, and "
-    "the generators that write the paperwork. One venture here is parked and listed "
-    "anyway, because a ledger that only shows what worked is marketing. If you are "
-    "reading this page wondering whom any of it is for, "
+    "From websites to process systems",
+    "Lantern began with websites. The work evolved into understanding how owner-run "
+    "businesses actually run, putting numbers on the process, and building the small "
+    "systems that keep it running when the owner is not in the room. This page keeps "
+    "the whole path visible: the separate ClearFlow experiment, the website machinery, "
+    "and the move into process and business transformation. If you are reading this "
+    "page wondering whom the current work is for, "
     '<a href="#for-you">the last entry answers exactly that</a>.',
     [("16", "demo sites on the shelf"), ("381", "leads in the master book"),
      ("13", "agent drafts awaiting approval, on disk today"),
@@ -1489,8 +1489,8 @@ operations = head(
      'withholds.</b> Volumes are real and current. Rates, conversion numbers, client '
      'economics and lead sources are deliberately absent: the same boundary the '
      'trading hub draws, for the same reason.</div></section>') + "".join([
-    entry("01", "May &ndash; June 2026", "ClearFlow, the first venture", [
-        p("Before Lantern there was ClearFlow: a spreadsheet-automation consultancy, "
+    entry("01", "May &ndash; June 2026", "ClearFlow, the parallel experiment", [
+        p("ClearFlow was a separate spreadsheet-automation experiment, "
           "born from a KPMG observation: almost every small business runs on a "
           "spreadsheet built by one employee years ago that the whole company depends "
           "on and nobody dares touch."),
@@ -1506,10 +1506,10 @@ operations = head(
               "The ClearFlow marketing site's headline"),
         go("https://clearflow-automation.github.io/clearflow/",
            "Visit the ClearFlow site, still live"),
-        p("It is parked, and not because the machinery failed: selling hands-on "
-          "automation from half a world away never found its footing, while the same "
-          "machinery pointed at shops twenty minutes from the desk worked "
-          "immediately. Everything below is its direct descendant. "
+        p("It is parked. Some of its working habits crossed into Lantern &mdash; "
+          "human approval, written guardrails, generated paperwork &mdash; but it was "
+          "not an earlier name for Lantern. Lantern began as a local website practice "
+          "and found its own path into systems work. "
           "<i>The fossil is in the address bar: the GitHub organisation serving this "
           "very site is still named clearflow-automation.</i>"),
         rule("A parked venture that taught the next one is not a failure; it is "
@@ -1604,32 +1604,34 @@ operations = head(
           "recurring revenue."),
         go("https://airlantern.com/#tuneup", "See the published scorecards"),
     ]),
-    entry("07", "&mdash;", "The open ledger", [
-        p("What the back room is looking into right now, updated as it changes:"),
-        p("<b>Conversion experiments on the demo funnel.</b> Which opening message, "
-          "which demo mood, which follow-up interval actually gets a reply. Volumes "
-          "are small enough that honesty matters more than statistics here."),
-        p("<b>An automation engagement with a chartered-accountancy firm.</b> "
-          "Scoping in September. What it becomes is not yet known, which is why "
-          "this line says nothing else."),
-        rule("Dead ideas cost nothing to publish. Live ones cost everything. The "
-             "ledger stays one step behind the work on purpose."),
+    entry("07", "September 2026 &ndash; present", "Lantern evolves", [
+        p("The website line exposed a larger problem. A better site can bring an "
+          "enquiry in, but it cannot make the business behind it consistent. The "
+          "handoffs, numbers, decisions and exceptions still live in the owner&rsquo;s "
+          "memory."),
+        p("Lantern now works one process at a time: understand how it really runs, "
+          "write it down, put numbers on it, build the small operating system around "
+          "it, pilot it, and hand it over. AI comes after the process is documented "
+          "and the evidence is sound."),
+        p("The website practice remains real and useful, but it is now a secondary "
+          "line. The evolved work is process and business transformation for "
+          "owner-run businesses and professional practices."),
+        rule("The system is what Lantern sells. Documentation is how the work becomes "
+             "visible, testable and transferable."),
     ]),
     entry("08", "&mdash;", "If some of this is for you", eid="for-you", blocks=[
-        p("The machinery is for hire in one specific form: fast, honest websites "
-          "for local businesses, and tune-ups for the ones whose site is quietly "
-          "failing them. That storefront is "
-          '<a href="https://airlantern.com">airlantern.com</a>: prices on the '
-          "page, a WhatsApp button that reaches an actual person, and a form that, "
-          "as of this week, verifiably delivers."),
+        p("If a process only works because the owner remembers every exception, "
+          "Lantern can make that work visible, measurable and repeatable. The first "
+          "conversation is free. The systems practice &mdash; and the secondary website "
+          "line &mdash; live at <a href='https://airlantern.com'>airlantern.com</a>."),
     ]),
 ])
 
 # ------------------------------------------------------------------ write ---
 PAGES = [
-    ("operations", "The machinery behind the studio",
-     "The engines behind a one-person web studio: lead finding, twenty-minute demos, "
-     "automated site audits, and the agent-run venture that came first and taught it all.",
+    ("operations", "From websites to process systems",
+     "How Lantern evolved from websites into process and business transformation, "
+     "with the machinery, evidence and earlier experiments kept visible.",
      operations, "/assets/ops/card.jpg"),
     ("market", "Sixty ideas, run until they broke",
      "Four months of market research over 252 million rows: the teardown, the "
